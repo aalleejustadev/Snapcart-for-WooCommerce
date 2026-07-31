@@ -5,7 +5,7 @@ Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
 Requires Plugins: woocommerce
-Stable tag: 2.0.0
+Stable tag: 2.0.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,15 +28,17 @@ SnapCart is deliberately small. There is no page builder, no dashboard, no accou
 
 = What you control =
 
-* **Icon** — five shapes covering how the biggest stores do it: shopping bag, trolley, basket, tote and handbag. Set the size and colour, or clear the colour to inherit your header so it stays legible on light and dark themes alike.
-* **Count badge** — position it left or right, set its background, number and border colours, choose the border's opacity, or hide the badge while the cart is empty.
+* **Icon** — five shapes covering how the biggest stores do it: shopping bag, trolley, basket, tote and handbag. Set the size and color, or clear the color to inherit your header so it stays legible on light and dark themes alike.
+* **Count badge** — position it left or right, set its background, number and border colors, choose the border's opacity, or hide the badge while the cart is empty.
 * **Destination** — send the icon to the cart page or straight to checkout.
 * **Confirmation style** — a centred dialog that commands attention, or a corner notice that never interrupts browsing.
 * **Corners** — square off the confirmation and its buttons, or round them, to match your theme.
+* **Colors** — the popup background and border, the dimmed backdrop behind it and its opacity, and the button background and label.
+* **What appears** — switch off the green tick, the supporting line, the product photo or the price. Anything switched off is left out of the page entirely rather than hidden with CSS.
 * **Every word** — headline, supporting line and both button labels are yours to write.
-* **Button colours** — set the background and the label separately, or clear the label colour and let SnapCart pick the readable one.
+* **Button colors** — set the background and the label separately, or clear the label color and let SnapCart pick the readable one.
 * **Timing** — close after a set number of seconds, or leave it until the shopper closes it.
-* **Suggestions** — off by default. Choose products related to what was just added, featured products, best sellers, newest products, or a list you pick by hand.
+* **Suggestions** — off by default. Choose products related to what was just added, featured products, best sellers, newest products, or a list you pick by hand. On desktop the strip gets arrows; on touch it is swiped.
 
 = Built to stay out of the way =
 
@@ -79,7 +81,7 @@ No. Add one block or one shortcode to your header, and set the rest from the set
 
 = Will it work with my theme? =
 
-Yes. Pick the icon's shape, size and colour on the settings screen, or clear the colour and it follows your header. The confirmation is styled independently of your theme, so it looks the same everywhere. If you want to fine-tune it, every colour and corner radius is a CSS custom property such as `--snapcart-accent` that you can override in Additional CSS.
+Yes. Pick the icon's shape, size and color on the settings screen, or clear the color and it follows your header. The confirmation is styled independently of your theme, so it looks the same everywhere. If you want to fine-tune it, every color and corner radius is a CSS custom property such as `--snapcart-accent` that you can override in Additional CSS.
 
 = The count does not update until I refresh the page =
 
@@ -129,16 +131,44 @@ Yes. Filters are available for the icon markup (`snapcart_icon_html`), its link 
 
 == Changelog ==
 
+= 2.0.7 =
+* Improved: the settings screen is grouped so related options sit together. The backdrop now sits with the layout that produces it, all three button settings share one group, and the cart icon tab separates the icon from its item count.
+* Improved: the backdrop setting is hidden when the corner notice is selected, since only the centred dialog draws one.
+
+= 2.0.6 =
+* Changed: the settings screen and documentation now use US spelling for "color" throughout.
+
+= 2.0.5 =
+* Changed: the confirmation settings tab is now titled "Added to Cart Confirmation".
+
+= 2.0.4 =
+* Changed: every label and section title on the settings screen now uses title case.
+
+= 2.0.3 =
+* New: choose sharp, soft or circular corners for the suggestion carousel arrows.
+* Fixed: hovering a carousel arrow could leave the glyph almost invisible on themes that force a white button hover color. The arrow now fills with your button color and the glyph switches to the contrasting label color.
+* Changed: the default second button now reads "Continue shopping" instead of "Keep shopping".
+* Changed: settings tab labels are capitalised.
+
+= 2.0.2 =
+* Changed: the Styling tab has been removed. Every appearance setting now sits with the feature it affects — icon and count colors under Cart icon, popup and button colors and corners under Added to Cart Confirmation.
+
+= 2.0.1 =
+* Maintenance: the plugin version is now kept in step across the plugin header, readme, block metadata and translation template by a single release step, so an update can never ship with mismatched version numbers.
+
 = 2.0.0 =
 * New: choose between a centred dialog and a corner notice for the confirmation.
 * New: a **Snap Cart** block for block themes and the site editor.
-* New: five cart icon shapes — shopping bag, trolley, basket, tote and handbag — with size and colour settings.
-* New: set the count badge position, background, number and border colours, and hide it while the cart is empty.
-* New: the count badge border has its own colour and opacity, defaulting to white at 50%.
+* New: five cart icon shapes — shopping bag, trolley, basket, tote and handbag — with size and color settings.
+* New: set the count badge position, background, number and border colors, and hide it while the cart is empty.
+* New: the count badge border has its own color and opacity, defaulting to white at 50%.
 * New: point the cart icon at the cart page or straight at checkout.
 * New: edit the headline, supporting line and both button labels.
-* New: a Styling tab with corner options for the confirmation and its buttons — sharp, soft, rounded or pill.
-* New: separate background and label colours for the main button. Clear the label colour and a readable one is chosen for you.
+* New: corner options for the confirmation and its buttons — sharp, soft, rounded or pill.
+* New: color and opacity settings for the dimmed backdrop, plus the popup background and its 1px border.
+* New: switch the green tick and the supporting line off individually. Neither is written to the page when off.
+* New: arrows on the suggestions strip for desktop visitors, alongside swiping on touch.
+* New: separate background and label colors for the main button. Clear the label color and a readable one is chosen for you.
 * New: suggest products related to the item just added, alongside featured, best selling, newest and hand-picked.
 * New: choose whether the confirmation shows the product photo and price.
 * New: opt in to removing your settings when the plugin is deleted.
@@ -146,7 +176,7 @@ Yes. Filters are available for the icon markup (`snapcart_icon_html`), its link 
 * Fixed: the count now updates the moment an item is removed or a quantity is changed on the cart page, instead of waiting for a page reload. It also stays correct on stores that have switched WooCommerce cart fragments off for performance.
 * Fixed: a confirmation could be swallowed when WooCommerce refreshed its cart fragments during an ordinary page load.
 * Fixed: an add-to-cart made through the WooCommerce product blocks now shows a confirmation.
-* Fixed: the icon colour was hardcoded and could disappear on light headers; it is now a setting, and clearing it makes the icon follow your header colour.
+* Fixed: the icon color was hardcoded and could disappear on light headers; it is now a setting, and clearing it makes the icon follow your header color.
 * Fixed: shop managers could open the settings screen but not save it.
 * Improved: prices are no longer cached, so multi-currency and tax-by-country plugins always display correctly.
 * Improved: only product IDs are cached, and the cache clears itself when you edit a product.
@@ -159,6 +189,7 @@ Yes. Filters are available for the icon markup (`snapcart_icon_html`), its link 
 * Improved: the confirmation is fully responsive down to the narrowest phones — buttons stack, spacing tightens, and a card taller than the screen scrolls without its top being cut off.
 * Improved: text inside the confirmation no longer shrinks on themes that reduce the root font size.
 * Improved: the suggestions strip scrolls without showing a scrollbar.
+* Changed: the default suggestions heading is now "Discover more".
 
 = 1.1.0 =
 * Added an optional product suggestions strip in the popup, with cached queries.
@@ -170,5 +201,26 @@ Yes. Filters are available for the icon markup (`snapcart_icon_html`), its link 
 
 == Upgrade Notice ==
 
+= 2.0.7 =
+Settings are grouped more sensibly. Nothing you have configured is lost.
+
+= 2.0.6 =
+A spelling change on the settings screen. Nothing on your store changes.
+
+= 2.0.5 =
+A settings screen wording change. Nothing on your store changes.
+
+= 2.0.4 =
+A wording tidy-up on the settings screen. Nothing on your store changes.
+
+= 2.0.3 =
+Fixes a carousel arrow that could become invisible on hover, and adds a corner style for the arrows.
+
+= 2.0.2 =
+Settings have moved: the Styling tab is gone and its options now sit with the feature they affect. Nothing you have configured is lost.
+
+= 2.0.1 =
+A maintenance release with no changes to how SnapCart behaves on your store.
+
 = 2.0.0 =
-A substantial update. Fixes variable product prices showing WooCommerce's screen-reader text, adds a Snap Cart block, a corner notice style, full control over wording and colours, and related-product suggestions. Your 1.x settings are migrated automatically.
+A substantial update. Fixes variable product prices showing WooCommerce's screen-reader text, adds a Snap Cart block, a corner notice style, full control over wording and colors, and related-product suggestions. Your 1.x settings are migrated automatically.

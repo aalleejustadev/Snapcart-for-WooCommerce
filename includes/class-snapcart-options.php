@@ -47,7 +47,7 @@ final class SnapCart_Options {
 	 */
 	public static function defaults() {
 		return array(
-			// Cart icon. An empty colour means "inherit from the theme".
+			// Cart icon. An empty color means "inherit from the theme".
 			'icon_style'             => 'bag',
 			'icon_size'              => 24,
 			'icon_color'             => '#ffffff',
@@ -59,22 +59,30 @@ final class SnapCart_Options {
 			'hide_empty_badge'       => 'yes',
 			'link_target'            => 'cart',
 
-			// Add-to-cart confirmation.
+			// Added to cart confirmation.
 			'enable_popup'           => 'yes',
 			'popup_style'            => 'center',
 			'popup_heading'          => '',
 			'popup_message'          => '',
 			'popup_primary_label'    => '',
 			'popup_secondary_label'  => '',
+			'popup_show_tick'        => 'yes',
+			'popup_show_message'     => 'yes',
 			'popup_show_price'       => 'yes',
 			'popup_show_image'       => 'yes',
 			'autodismiss_seconds'    => 6,
 
 			// Styling.
+			'overlay_color'          => '#101218',
+			'overlay_opacity'        => 55,
+			'popup_bg'               => '#ffffff',
+			'popup_border'           => '#e6e7eb',
+			'popup_border_opacity'   => 100,
 			'accent_color'           => '#000000',
 			'accent_text_color'      => '#ffffff',
 			'popup_radius'           => 'soft',
 			'button_radius'          => 'soft',
+			'arrow_radius'           => 'circle',
 
 			// Recommendations.
 			'enable_recommendations' => 'no',
@@ -102,6 +110,7 @@ final class SnapCart_Options {
 			'popup_style'      => array( 'center', 'toast' ),
 			'popup_radius'     => array( 'sharp', 'soft', 'round' ),
 			'button_radius'    => array( 'sharp', 'soft', 'pill' ),
+			'arrow_radius'     => array( 'sharp', 'soft', 'circle' ),
 			'recommend_source' => array( 'related', 'featured', 'bestselling', 'recent', 'handpicked' ),
 		);
 	}
@@ -115,6 +124,8 @@ final class SnapCart_Options {
 		return array(
 			'hide_empty_badge',
 			'enable_popup',
+			'popup_show_tick',
+			'popup_show_message',
 			'popup_show_price',
 			'popup_show_image',
 			'enable_recommendations',
@@ -139,12 +150,22 @@ final class SnapCart_Options {
 	}
 
 	/**
-	 * Settings stored as a hex colour (empty string means "inherit").
+	 * Settings stored as a hex color (empty string means "inherit").
 	 *
 	 * @return string[]
 	 */
 	private static function color_keys() {
-		return array( 'icon_color', 'badge_bg', 'badge_color', 'badge_border', 'accent_color', 'accent_text_color' );
+		return array(
+			'icon_color',
+			'badge_bg',
+			'badge_color',
+			'badge_border',
+			'overlay_color',
+			'popup_bg',
+			'popup_border',
+			'accent_color',
+			'accent_text_color',
+		);
 	}
 
 	/**
@@ -156,6 +177,8 @@ final class SnapCart_Options {
 		return array(
 			'icon_size'            => array( 16, 48 ),
 			'badge_border_opacity' => array( 0, 100 ),
+			'overlay_opacity'      => array( 0, 100 ),
+			'popup_border_opacity' => array( 0, 100 ),
 			'autodismiss_seconds'  => array( 0, 60 ),
 			'recommend_count'      => array( 1, 12 ),
 		);

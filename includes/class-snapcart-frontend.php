@@ -267,7 +267,7 @@ final class SnapCart_Frontend {
 	/**
 	 * The chosen icon as an inline SVG.
 	 *
-	 * Every icon is drawn with `currentColor`, so it follows the icon colour
+	 * Every icon is drawn with `currentColor`, so it follows the icon color
 	 * setting or, when that is cleared, the surrounding header.
 	 *
 	 * @return string
@@ -541,23 +541,31 @@ final class SnapCart_Frontend {
 			$this->prevent_page_cache();
 		}
 
-		$has_wc_ajax = class_exists( 'WC_AJAX' );
+		$has_wc_ajax  = class_exists( 'WC_AJAX' );
+		$show_message = SnapCart_Options::is_on( 'popup_show_message' );
 
 		return array(
 			'popupEnabled'   => $this->popup_enabled(),
 			'popupStyle'     => (string) SnapCart_Options::get( 'popup_style' ),
 			'autoDismiss'    => (int) SnapCart_Options::get( 'autodismiss_seconds' ) * 1000,
 			'hideEmptyBadge' => SnapCart_Options::is_on( 'hide_empty_badge' ),
+			'showTick'       => SnapCart_Options::is_on( 'popup_show_tick' ),
 			'notify'         => $notify,
 			'ajaxUrl'        => $has_wc_ajax ? WC_AJAX::get_endpoint( 'snapcart_notify' ) : '',
 			'countUrl'       => $has_wc_ajax ? WC_AJAX::get_endpoint( 'snapcart_count' ) : '',
 			'nonce'          => wp_create_nonce( 'snapcart_notify' ),
 			'i18n'           => array(
 				'heading'   => SnapCart_Options::text( 'popup_heading', __( 'Added to your cart', 'snapcart-for-woocommerce' ) ),
-				'message'   => SnapCart_Options::text( 'popup_message', __( 'Saved to your cart and ready whenever you are.', 'snapcart-for-woocommerce' ) ),
+				// Sent as an empty string when switched off, so the paragraph is
+				// never created and its text never reaches the page at all.
+				'message'   => $show_message
+					? SnapCart_Options::text( 'popup_message', __( 'Saved to your cart and ready whenever you are.', 'snapcart-for-woocommerce' ) )
+					: '',
 				'primary'   => SnapCart_Options::text( 'popup_primary_label', __( 'View cart', 'snapcart-for-woocommerce' ) ),
-				'secondary' => SnapCart_Options::text( 'popup_secondary_label', __( 'Keep shopping', 'snapcart-for-woocommerce' ) ),
+				'secondary' => SnapCart_Options::text( 'popup_secondary_label', __( 'Continue shopping', 'snapcart-for-woocommerce' ) ),
 				'close'     => __( 'Close', 'snapcart-for-woocommerce' ),
+				'prev'      => __( 'Previous products', 'snapcart-for-woocommerce' ),
+				'next'      => __( 'More products', 'snapcart-for-woocommerce' ),
 				/* translators: %d: quantity added. */
 				'qty'       => __( 'Qty %d', 'snapcart-for-woocommerce' ),
 			),
@@ -600,7 +608,7 @@ final class SnapCart_Frontend {
 	}
 
 	/**
-	 * Build the CSS custom properties for any colours the shop owner has set.
+	 * Build the CSS custom properties for any colors the shop owner has set.
 	 *
 	 * Nothing is printed when the defaults are in use, so the theme's own
 	 * styling stays untouched.
@@ -612,6 +620,7 @@ final class SnapCart_Frontend {
 			'icon_color'   => '--snapcart-icon-color',
 			'badge_bg'     => '--snapcart-badge-bg',
 			'badge_color'  => '--snapcart-badge-color',
+			'popup_bg'     => '--snapcart-surface',
 			'accent_color' => '--snapcart-accent',
 		);
 
@@ -624,18 +633,30 @@ final class SnapCart_Frontend {
 			}
 		}
 
-		// Clearing the border colour is how the shop owner turns the border off,
+		// Clearing a border color is how the shop owner turns that border off,
 		// so the width collapses with it rather than leaving a transparent edge.
-		$border = (string) SnapCart_Options::get( 'badge_border' );
+		foreach ( array(
+			'badge_border' => array( '--snapcart-badge-border', 'badge_border_opacity' ),
+			'popup_border' => array( '--snapcart-popup-border', 'popup_border_opacity' ),
+		) as $option_key => $config ) {
+			list( $property, $opacity_key ) = $config;
+			$color                          = (string) SnapCart_Options::get( $option_key );
 
-		if ( '' === $border ) {
-			$rules[] = '--snapcart-badge-border-width:0';
-			$rules[] = '--snapcart-badge-border:transparent';
-		} else {
-			$rules[] = '--snapcart-badge-border:' . $this->rgba( $border, (int) SnapCart_Options::get( 'badge_border_opacity' ) );
+			if ( '' === $color ) {
+				$rules[] = $property . '-width:0';
+				$rules[] = $property . ':transparent';
+			} else {
+				$rules[] = $property . ':' . $this->rgba( $color, (int) SnapCart_Options::get( $opacity_key ) );
+			}
 		}
 
-		// Button label colour. When the shop owner clears it, a readable colour
+		// The backdrop behind the centred dialog.
+		$overlay = (string) SnapCart_Options::get( 'overlay_color' );
+		if ( '' !== $overlay ) {
+			$rules[] = '--snapcart-overlay:' . $this->rgba( $overlay, (int) SnapCart_Options::get( 'overlay_opacity' ) );
+		}
+
+		// Button label color. When the shop owner clears it, a readable color
 		// is derived from the button background instead of leaving it unset.
 		$accent      = (string) SnapCart_Options::get( 'accent_color' );
 		$accent_text = (string) SnapCart_Options::get( 'accent_text_color' );
@@ -675,23 +696,32 @@ final class SnapCart_Frontend {
 			'pill'  => '999px',
 		);
 
+		$arrow = array(
+			'sharp'  => '0',
+			'soft'   => '6px',
+			'circle' => '999px',
+		);
+
 		$popup_key  = (string) SnapCart_Options::get( 'popup_radius' );
 		$button_key = (string) SnapCart_Options::get( 'button_radius' );
+		$arrow_key  = (string) SnapCart_Options::get( 'arrow_radius' );
 
 		$popup_key  = isset( $popup[ $popup_key ] ) ? $popup_key : 'soft';
 		$button_key = isset( $button[ $button_key ] ) ? $button_key : 'soft';
+		$arrow_key  = isset( $arrow[ $arrow_key ] ) ? $arrow_key : 'circle';
 
 		return array(
 			'--snapcart-radius:' . $popup[ $popup_key ][0],
 			'--snapcart-inner-radius:' . $popup[ $popup_key ][1],
 			'--snapcart-btn-radius:' . $button[ $button_key ],
+			'--snapcart-arrow-radius:' . $arrow[ $arrow_key ],
 		);
 	}
 
 	/**
-	 * Split a hex colour into its red, green and blue components.
+	 * Split a hex color into its red, green and blue components.
 	 *
-	 * @param string $hex Hex colour, with or without the leading hash.
+	 * @param string $hex Hex color, with or without the leading hash.
 	 * @return int[]|null Three channel values, or null when unparseable.
 	 */
 	private function hex_to_rgb( $hex ) {
@@ -713,9 +743,9 @@ final class SnapCart_Frontend {
 	}
 
 	/**
-	 * Build an `rgba()` value from a hex colour and a percentage opacity.
+	 * Build an `rgba()` value from a hex color and a percentage opacity.
 	 *
-	 * @param string $hex     Hex colour.
+	 * @param string $hex     Hex color.
 	 * @param int    $percent Opacity, 0-100.
 	 * @return string
 	 */
@@ -735,9 +765,9 @@ final class SnapCart_Frontend {
 	}
 
 	/**
-	 * Pick black or white text for a given background colour.
+	 * Pick black or white text for a given background color.
 	 *
-	 * @param string $hex Hex colour, e.g. #1a1a1a.
+	 * @param string $hex Hex color, e.g. #1a1a1a.
 	 * @return string
 	 */
 	private function readable_contrast( $hex ) {

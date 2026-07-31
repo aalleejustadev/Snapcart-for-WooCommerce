@@ -130,6 +130,34 @@
 	color: var(--sc-muted);
 }
 
+/* One labelled cluster of settings inside a tab. */
+.snapcart-group[hidden] {
+	display: none;
+}
+
+.snapcart-group + .snapcart-group {
+	margin-top: 10px;
+	padding-top: 6px;
+	border-top: 1px solid #f0f0f1;
+}
+
+.snapcart-group__title {
+	font-size: 13px;
+	font-weight: 600;
+	margin: 18px 0 2px;
+	color: var(--sc-text);
+}
+
+.snapcart-group__subtitle {
+	margin: 0;
+	color: var(--sc-muted);
+	font-size: 13px;
+}
+
+.snapcart-group .form-table {
+	margin-top: 4px;
+}
+
 .snapcart-panel__notice {
 	margin: 14px 0 0;
 	padding: 10px 12px;
@@ -436,6 +464,13 @@
 }
 
 .snapcart-radius--pill {
+	border-radius: 999px;
+}
+
+/* A circle needs equal sides, unlike the wider pill swatch. */
+.snapcart-radius--circle {
+	width: 30px;
+	height: 30px;
 	border-radius: 999px;
 }
 

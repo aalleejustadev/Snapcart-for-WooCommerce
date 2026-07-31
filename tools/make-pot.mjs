@@ -13,6 +13,12 @@ import { dirname, join, relative, sep } from 'node:path';
 
 const root = join( dirname( fileURLToPath( import.meta.url ) ), '..' );
 const DOMAIN = 'snapcart-for-woocommerce';
+
+// Read from the plugin header rather than hardcoding, so a version bump never
+// leaves a stale number in the translation template.
+const VERSION = ( await readFile( join( root, `${ DOMAIN }.php` ), 'utf8' ) ).match(
+	/^\s*\*\s*Version:\s*(\d+\.\d+\.\d+)\s*$/m
+)[ 1 ];
 const SKIP_DIRS = new Set( [ 'node_modules', '.git', 'languages', 'tools', '.wordpress-org' ] );
 
 // Function name → which argument positions carry translatable text.
@@ -198,7 +204,7 @@ const header = `# Copyright (C) ${ new Date().getFullYear() } Ali Murtaza
 # This file is distributed under the GPL-2.0-or-later license.
 msgid ""
 msgstr ""
-"Project-Id-Version: SnapCart for WooCommerce 2.0.0\\n"
+"Project-Id-Version: SnapCart for WooCommerce ${ VERSION }\\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/${ DOMAIN }/\\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\\n"
 "Language-Team: LANGUAGE <LL@li.org>\\n"

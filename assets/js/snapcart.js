@@ -311,20 +311,24 @@
 		closeBtn.addEventListener( 'click', close );
 		popup.appendChild( closeBtn );
 
-		// Heading with the success tick.
+		// Heading, with the success tick when it is switched on.
 		var heading = el( 'h2', 'snapcart-popup__heading' );
 		heading.id = 'snapcart-heading';
 
-		var check = el( 'span', 'snapcart-popup__check' );
-		check.setAttribute( 'aria-hidden', 'true' );
-		check.appendChild( svg( [ 'M4 12l5 5L20 6' ], 13 ) );
+		if ( data.showTick ) {
+			var check = el( 'span', 'snapcart-popup__check' );
+			check.setAttribute( 'aria-hidden', 'true' );
+			check.appendChild( svg( [ 'M4 12l5 5L20 6' ], 13 ) );
+			heading.appendChild( check );
+		}
 
-		heading.appendChild( check );
 		heading.appendChild(
 			document.createTextNode( i18n.heading || 'Added to your cart' )
 		);
 		popup.appendChild( heading );
 
+		// The server sends an empty string when the supporting line is switched
+		// off, so the paragraph is never created at all.
 		if ( i18n.message ) {
 			popup.appendChild( el( 'p', 'snapcart-popup__message', i18n.message ) );
 		}
@@ -367,7 +371,7 @@
 		var secondary = el(
 			'button',
 			'snapcart-btn snapcart-btn--ghost',
-			i18n.secondary || 'Keep shopping'
+			i18n.secondary || 'Continue shopping'
 		);
 		secondary.type = 'button';
 		secondary.addEventListener( 'click', close );
@@ -377,7 +381,7 @@
 
 		var rec = buildRecommendations( notify.recommend );
 		if ( rec ) {
-			popup.appendChild( rec );
+			popup.appendChild( rec.wrap );
 		}
 
 		// Hovering or focusing the card holds the auto-dismiss timer, so the
@@ -392,7 +396,7 @@
 			popup.setAttribute( 'aria-labelledby', 'snapcart-heading' );
 		}
 
-		return { popup: popup, focusTarget: primary };
+		return { popup: popup, focusTarget: primary, rec: rec };
 	}
 
 	function buildRecommendations( rec ) {
@@ -401,15 +405,25 @@
 		}
 
 		var wrap = el( 'div', 'snapcart-rec' );
+		var head = el( 'div', 'snapcart-rec__head' );
 
 		if ( rec.heading ) {
 			var headingId = 'snapcart-rec-heading';
 			var heading = el( 'p', 'snapcart-rec__heading', rec.heading );
 			heading.id = headingId;
-			wrap.appendChild( heading );
+			head.appendChild( heading );
 			wrap.setAttribute( 'role', 'group' );
 			wrap.setAttribute( 'aria-labelledby', headingId );
 		}
+
+		var nav = el( 'div', 'snapcart-rec__nav' );
+		var prev = arrowButton( -1, i18n.prev || 'Previous', 'M15 5l-7 7 7 7' );
+		var next = arrowButton( 1, i18n.next || 'Next', 'M9 5l7 7-7 7' );
+
+		nav.appendChild( prev );
+		nav.appendChild( next );
+		head.appendChild( nav );
+		wrap.appendChild( head );
 
 		var track = el( 'div', 'snapcart-rec__track' );
 
@@ -439,7 +453,67 @@
 		}
 
 		wrap.appendChild( track );
-		return wrap;
+
+		prev.addEventListener( 'click', function () {
+			scrollTrack( track, -1 );
+		} );
+		next.addEventListener( 'click', function () {
+			scrollTrack( track, 1 );
+		} );
+
+		// Arrow state follows the strip however it was scrolled — by arrow,
+		// wheel, swipe, or tabbing a card into view.
+		track.addEventListener( 'scroll', function () {
+			syncArrows( track, nav, prev, next );
+		} );
+
+		return { wrap: wrap, track: track, nav: nav, prev: prev, next: next };
+	}
+
+	function arrowButton( direction, label, path ) {
+		var button = el( 'button', 'snapcart-rec__arrow' );
+		button.type = 'button';
+		button.setAttribute( 'aria-label', label );
+		button.setAttribute( 'data-direction', String( direction ) );
+		button.appendChild( svg( [ path ], 13 ) );
+		return button;
+	}
+
+	/**
+	 * Scroll the strip by roughly one card, in the reading direction.
+	 */
+	function scrollTrack( track, direction ) {
+		var card = track.firstElementChild;
+		var step = card ? card.getBoundingClientRect().width + 12 : 140;
+
+		// In right-to-left the visual "next" is a decreasing scroll offset.
+		if ( 'rtl' === window.getComputedStyle( track ).direction ) {
+			direction *= -1;
+		}
+
+		var smooth = ! window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+
+		if ( track.scrollBy ) {
+			track.scrollBy( { left: direction * step, behavior: smooth ? 'smooth' : 'auto' } );
+		} else {
+			track.scrollLeft += direction * step;
+		}
+	}
+
+	/**
+	 * Show the arrows only when there is something to scroll, and disable
+	 * whichever one has run out of runway.
+	 */
+	function syncArrows( track, nav, prev, next ) {
+		var overflow = track.scrollWidth - track.clientWidth;
+
+		nav.classList.toggle( 'is-scrollable', overflow > 4 );
+
+		// scrollLeft runs negative in right-to-left, so compare on magnitude.
+		var offset = Math.abs( track.scrollLeft );
+
+		prev.disabled = offset <= 4;
+		next.disabled = offset >= overflow - 4;
 	}
 
 	/* ---------------------------------------------------------------------
@@ -494,6 +568,11 @@
 		// Force a reflow so the opening transition runs.
 		void root.offsetHeight;
 		root.classList.add( 'is-open' );
+
+		// Arrow state can only be measured once the strip is in the document.
+		if ( built.rec ) {
+			syncArrows( built.rec.track, built.rec.nav, built.rec.prev, built.rec.next );
+		}
 
 		if ( style === 'center' && built.focusTarget ) {
 			built.focusTarget.focus();

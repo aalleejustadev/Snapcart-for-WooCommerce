@@ -17,6 +17,7 @@
 	--snapcart-text: #16181c;
 	--snapcart-muted: #6b7280;
 	--snapcart-border: #e6e7eb;
+	--snapcart-popup-border: #e6e7eb;
 	--snapcart-radius: 14px;
 	--snapcart-inner-radius: 8px;
 	--snapcart-btn-radius: 8px;
@@ -113,6 +114,7 @@
 	width: 100%;
 	background: var(--snapcart-surface);
 	color: var(--snapcart-text);
+	border: var(--snapcart-popup-border-width, 1px) solid var(--snapcart-popup-border);
 	border-radius: var(--snapcart-radius);
 	box-shadow: var(--snapcart-shadow);
 	padding: 24px 22px 20px;
@@ -170,7 +172,7 @@
 	display: flex;
 	align-items: center;
 	gap: 9px;
-	margin: 0 0 4px;
+	margin: 0 0 8px;
 	padding-inline-end: 28px;
 	font-size: 1.0625em;
 	font-weight: 700;
@@ -388,7 +390,6 @@
 }
 
 .snapcart-toast .snapcart-popup {
-	border: 1px solid var(--snapcart-border);
 	box-shadow: none;
 }
 
@@ -469,8 +470,17 @@
 	border-block-start: 1px solid var(--snapcart-border);
 }
 
+.snapcart-rec__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-block-end: 11px;
+	min-height: 26px;
+}
+
 .snapcart-rec__heading {
-	margin: 0 0 11px;
+	margin: 0;
 	font-size: 0.75em;
 	font-weight: 700;
 	letter-spacing: 0.03em;
@@ -482,6 +492,65 @@
  * trailing edge is what signals there is more, the same cue used by every major
  * storefront. Scrolling by touch, trackpad, wheel and keyboard all still work,
  * and tabbing through the cards scrolls them into view. */
+/* Carousel arrows. Pointer devices only: on a touch screen the strip is swiped,
+ * and arrows would just take space away from the products. */
+.snapcart-rec__nav {
+	display: none;
+	gap: 6px;
+	flex: 0 0 auto;
+}
+
+/* Both states are stated on a selector carrying the popup class as well, so a
+ * theme's own `button:hover { color: #fff }` cannot bleed through and leave the
+ * glyph invisible against a transparent background. */
+.snapcart-popup .snapcart-rec__arrow {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	padding: 0;
+	margin: 0;
+	border: 1px solid var(--snapcart-border);
+	border-radius: var(--snapcart-arrow-radius, 999px);
+	background: transparent;
+	color: var(--snapcart-text);
+	cursor: pointer;
+	transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+}
+
+.snapcart-rec__arrow svg {
+	width: 13px;
+	height: 13px;
+	display: block;
+}
+
+.snapcart-popup .snapcart-rec__arrow:hover:not(:disabled),
+.snapcart-popup .snapcart-rec__arrow:focus-visible:not(:disabled) {
+	background: var(--snapcart-accent);
+	border-color: var(--snapcart-accent);
+	color: var(--snapcart-accent-contrast);
+}
+
+.snapcart-popup .snapcart-rec__arrow:focus-visible {
+	outline: 2px solid var(--snapcart-accent);
+	outline-offset: 2px;
+}
+
+.snapcart-popup .snapcart-rec__arrow:disabled {
+	background: transparent;
+	color: var(--snapcart-text);
+	border-color: var(--snapcart-border);
+	opacity: 0.35;
+	cursor: default;
+}
+
+@media (hover: hover) and (pointer: fine) and (min-width: 600px) {
+	.snapcart-rec__nav.is-scrollable {
+		display: flex;
+	}
+}
+
 .snapcart-rec__track {
 	display: flex;
 	gap: 12px;

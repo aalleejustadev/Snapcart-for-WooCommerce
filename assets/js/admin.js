@@ -133,9 +133,24 @@
 		var recOn = popupOn && $( '#snapcart-enable-rec' ).is( ':checked' );
 		var handpicked = recOn && 'handpicked' === $( '#snapcart-rec-source' ).val();
 
+		// Only the centred layout draws a backdrop, so the corner notice hides
+		// the setting rather than offering one that does nothing.
+		var centered = 'center' === $( '.snapcart-row-layout input:checked' ).val();
+
 		setRowsVisible( '.snapcart-row-popup', popupOn );
+		setRowsVisible( '.snapcart-row-centered', popupOn && centered );
 		setRowsVisible( '.snapcart-row-rec', recOn );
 		setRowsVisible( '.snapcart-row-handpicked', handpicked );
+
+		// A group whose rows have all been hidden would leave its sub-heading
+		// stranded, so the whole group goes with them.
+		$( '.snapcart-group' ).each( function () {
+			var visible = $( this ).find( 'tr' ).filter( function () {
+				return this.style.display !== 'none';
+			} ).length;
+
+			this.hidden = 0 === visible;
+		} );
 
 		// Explain any panel left empty by the confirmation being off, rather
 		// than leaving it blank.
@@ -147,12 +162,12 @@
 
 	$( document ).on(
 		'change',
-		'#snapcart-enable-popup, #snapcart-enable-rec, #snapcart-rec-source',
+		'#snapcart-enable-popup, #snapcart-enable-rec, #snapcart-rec-source, .snapcart-row-layout input',
 		sync
 	);
 
 	/* ---------------------------------------------------------------------
-	 * Colour pickers
+	 * Color pickers
 	 * ------------------------------------------------------------------ */
 
 	function initColorPickers() {

@@ -82,7 +82,7 @@ final class SnapCart_Recommendations {
 		}
 
 		return array(
-			'heading' => SnapCart_Options::text( 'recommend_heading', __( 'You might also like', 'snapcart-for-woocommerce' ) ),
+			'heading' => SnapCart_Options::text( 'recommend_heading', __( 'Discover more', 'snapcart-for-woocommerce' ) ),
 			'items'   => $items,
 		);
 	}

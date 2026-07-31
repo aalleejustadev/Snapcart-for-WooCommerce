@@ -45,7 +45,7 @@ clear route onward to the cart and one back to browsing.
 
 ## Features
 
-**For shoppers**
+#### For shoppers
 
 - A cart icon with a count that updates the moment the cart changes — adding,
   removing a line on the cart page, or editing a quantity.
@@ -54,19 +54,18 @@ clear route onward to the cart and one back to browsing.
   confirmation so they keep browsing.
 - An optional scrollable strip of suggested products.
 
-**For store owners**
+#### For store owners
 
 | Area | What you control |
 | --- | --- |
-| Icon | Five shapes (bag, trolley, basket, tote, handbag), size, colour |
-| Count badge | Position, background, number and border colours, border opacity, hide when empty |
+| Icon | Five shapes (bag, trolley, basket, tote, handbag), size, color |
+| Count badge | Position, background, number and border colors, border opacity, hide when empty |
 | Destination | Cart page or straight to checkout |
-| Confirmation | Centred dialog or corner notice, headline, supporting line, both button labels, auto-close timing, whether to show the photo and price |
-| Styling | Corner radius for the popup and its buttons, button background and label colours |
-| Suggestions | Related, featured, best selling, newest or hand-picked; heading, count, prices |
+| Confirmation | Centred dialog or corner notice, headline, supporting line, both button labels, auto-close timing, which parts appear, popup and backdrop colors, corner radii, button colors |
+| Suggestions | Related, featured, best selling, newest or hand-picked; heading, count, prices, desktop arrows |
 | Data | Whether settings are removed when the plugin is deleted |
 
-**Under the hood**
+#### Under the hood
 
 - About 20 KB of CSS and JS, minified, served from your own server. No
   frameworks, no icon fonts, no external requests of any kind.
@@ -129,13 +128,13 @@ is set once for the whole site.
 
 Paste the shortcode into any HTML, shortcode or widget element:
 
-```
+```text
 [snapcart_icon]
 ```
 
 With wording beside the icon:
 
-```
+```text
 [snapcart_icon label="Cart"]
 ```
 
@@ -147,13 +146,14 @@ With wording beside the icon:
 
 ## Settings
 
-Everything lives under **WooCommerce → SnapCart**, split across five tabs:
+Everything lives under **WooCommerce → SnapCart**, split across four tabs. Each
+appearance setting sits with the feature it affects rather than in a separate
+styling section:
 
 | Tab | Covers |
 | --- | --- |
-| Cart icon | Shape, size, colour, badge position and colours, link destination |
-| Confirmation | On/off, centred or corner, all wording, timing, product details |
-| Styling | Corner radius for the popup and buttons, button colours |
+| Cart icon | Shape, size, color, count position and colors, empty-cart behaviour, link destination |
+| Confirmation | On/off, centred or corner, all wording, timing, which parts appear, plus popup and button colors and corners |
 | Suggestions | Source, heading, how many, prices |
 | Data | What happens on deletion |
 
@@ -201,7 +201,7 @@ add_filter( 'snapcart_load_assets', function ( $load ) {
 
 ### Styling
 
-Every colour and radius is a CSS custom property, so a theme can restyle
+Every color and radius is a CSS custom property, so a theme can restyle
 SnapCart without fighting specificity:
 
 ```css
@@ -231,6 +231,25 @@ npm run pot     # regenerate languages/snapcart-for-woocommerce.pot
 npm run zip     # build/snapcart-for-woocommerce.zip, ready for WordPress.org
 ```
 
+### Releasing
+
+The version appears in six places that must agree — WordPress reads the plugin
+header, the update checker reads the readme's stable tag, the block editor reads
+the block metadata, and asset cache-busting reads the PHP constant. Editing them
+by hand reliably misses one, so use the release script:
+
+```bash
+npm run release:patch    # 2.0.1 -> 2.0.2, then rebuild assets and the POT
+npm run release:minor    # 2.0.2 -> 2.1.0
+npm run release:major    # 2.1.0 -> 3.0.0
+npm run version:check    # report any location that has drifted out of step
+```
+
+`version:check` exits non-zero when it finds a mismatch, so it works as a CI or
+pre-commit gate. After bumping, add a matching `= X.Y.Z =` section to the
+changelog in `readme.txt`; WordPress.org shows an empty changelog if the stable
+tag has no entry of its own.
+
 Coding standards, if you have PHPCS with WPCS installed:
 
 ```bash
@@ -245,7 +264,7 @@ WordPress.org rule that human-readable source is always available.
 
 ## Project layout
 
-```
+```text
 snapcart-for-woocommerce.php   Bootstrap, constants, WooCommerce compatibility
 uninstall.php                  Opt-in cleanup, multisite aware
 includes/

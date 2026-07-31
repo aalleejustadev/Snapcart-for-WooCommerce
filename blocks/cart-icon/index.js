@@ -64,10 +64,10 @@
 					null,
 					el(
 						PanelBody,
-						{ title: __( 'Cart icon', 'snapcart-for-woocommerce' ) },
+						{ title: __( 'Cart Icon', 'snapcart-for-woocommerce' ) },
 						el( TextControl, {
 							__nextHasNoMarginBottom: true,
-							label: __( 'Text label', 'snapcart-for-woocommerce' ),
+							label: __( 'Text Label', 'snapcart-for-woocommerce' ),
 							help: __(
 								'Optional wording shown beside the icon, such as "Cart". Leave blank for icon only.',
 								'snapcart-for-woocommerce'
@@ -81,7 +81,7 @@
 							'p',
 							{ className: 'snapcart-block-help' },
 							__(
-								'The icon style, badge colours and link destination are set once for the whole site.',
+								'The icon style, badge colors and link destination are set once for the whole site.',
 								'snapcart-for-woocommerce'
 							),
 							' ',

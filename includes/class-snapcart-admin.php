@@ -44,11 +44,27 @@ final class SnapCart_Admin {
 	private static $instance = null;
 
 	/**
-	 * Registered sections, in the order they appear as tabs.
+	 * Tab panels, in the order they appear.
 	 *
 	 * @var array<string, array>
 	 */
 	private $tabs = array();
+
+	/**
+	 * Settings sections, each belonging to a tab and rendered as one group of
+	 * fields under its own sub-heading.
+	 *
+	 * @var array<string, array>
+	 */
+	private $groups = array();
+
+	/**
+	 * How many fields each group holds, so a group left empty is not rendered
+	 * as a stray heading with a blank table under it.
+	 *
+	 * @var array<string, int>
+	 */
+	private $group_field_counts = array();
 
 	/**
 	 * Get the singleton instance.
@@ -159,7 +175,7 @@ final class SnapCart_Admin {
 			return;
 		}
 
-		// WooCommerce's product picker and the core colour picker are already
+		// WooCommerce's product picker and the core color picker are already
 		// part of WordPress and WooCommerce; SnapCart ships neither.
 		wp_enqueue_style( 'woocommerce_admin_styles' );
 		wp_enqueue_script( 'wc-enhanced-select' );
@@ -212,69 +228,95 @@ final class SnapCart_Admin {
 			)
 		);
 
-		$this->add_section(
+		/*
+		 * Cart icon — the glyph itself, then the number that sits on it.
+		 */
+		$this->add_tab(
 			'icon',
-			__( 'Cart icon', 'snapcart-for-woocommerce' ),
+			__( 'Cart Icon', 'snapcart-for-woocommerce' ),
 			__( 'How the cart button looks in your header, and where it sends shoppers.', 'snapcart-for-woocommerce' )
 		);
 
-		$this->add_field( 'icon_style', __( 'Icon shape', 'snapcart-for-woocommerce' ), 'icon', 'field_icon_style' );
-		$this->add_field( 'icon_size', __( 'Icon size', 'snapcart-for-woocommerce' ), 'icon', 'field_icon_size' );
-		$this->add_field( 'icon_color', __( 'Icon colour', 'snapcart-for-woocommerce' ), 'icon', 'field_icon_color' );
-		$this->add_field( 'badge_position', __( 'Count position', 'snapcart-for-woocommerce' ), 'icon', 'field_badge_position' );
-		$this->add_field( 'badge_colors', __( 'Count colours', 'snapcart-for-woocommerce' ), 'icon', 'field_badge_colors' );
-		$this->add_field( 'hide_empty_badge', __( 'Empty cart', 'snapcart-for-woocommerce' ), 'icon', 'field_hide_empty_badge' );
-		$this->add_field( 'link_target', __( 'Icon links to', 'snapcart-for-woocommerce' ), 'icon', 'field_link_target' );
+		$this->add_group( 'icon_glyph', 'icon', __( 'Icon', 'snapcart-for-woocommerce' ) );
 
-		$this->add_section(
+		$this->add_field( 'icon_style', __( 'Shape', 'snapcart-for-woocommerce' ), 'icon_glyph', 'field_icon_style' );
+		$this->add_field( 'icon_size', __( 'Size', 'snapcart-for-woocommerce' ), 'icon_glyph', 'field_icon_size' );
+		$this->add_field( 'icon_color', __( 'Color', 'snapcart-for-woocommerce' ), 'icon_glyph', 'field_icon_color' );
+		$this->add_field( 'link_target', __( 'Links To', 'snapcart-for-woocommerce' ), 'icon_glyph', 'field_link_target' );
+
+		$this->add_group( 'icon_count', 'icon', __( 'Item Count', 'snapcart-for-woocommerce' ) );
+
+		$this->add_field( 'badge_position', __( 'Position', 'snapcart-for-woocommerce' ), 'icon_count', 'field_badge_position' );
+		$this->add_field( 'badge_colors', __( 'Colors', 'snapcart-for-woocommerce' ), 'icon_count', 'field_badge_colors' );
+		$this->add_field( 'hide_empty_badge', __( 'When Empty', 'snapcart-for-woocommerce' ), 'icon_count', 'field_hide_empty_badge' );
+
+		/*
+		 * Confirmation — whether it runs, then how it looks, what it says, and
+		 * its buttons. Each cluster keeps the settings that affect one another
+		 * side by side: the backdrop sits with the layout that produces it, and
+		 * all three button settings sit together.
+		 */
+		$this->add_tab(
 			'popup',
-			__( 'Add-to-cart confirmation', 'snapcart-for-woocommerce' ),
+			__( 'Added to Cart Confirmation', 'snapcart-for-woocommerce' ),
 			__( 'Reassure shoppers the moment they add something, and give them a clear route to checkout without losing their place.', 'snapcart-for-woocommerce' ),
 			__( 'Confirmation', 'snapcart-for-woocommerce' )
 		);
 
 		$this->add_field( 'enable_popup', __( 'Confirmation', 'snapcart-for-woocommerce' ), 'popup', 'field_enable_popup' );
-		$this->add_field( 'popup_style', __( 'Appearance', 'snapcart-for-woocommerce' ), 'popup', 'field_popup_style', 'snapcart-row-popup' );
-		$this->add_field( 'popup_heading', __( 'Headline', 'snapcart-for-woocommerce' ), 'popup', 'field_popup_heading', 'snapcart-row-popup' );
-		$this->add_field( 'popup_message', __( 'Supporting text', 'snapcart-for-woocommerce' ), 'popup', 'field_popup_message', 'snapcart-row-popup' );
-		$this->add_field( 'popup_buttons', __( 'Button wording', 'snapcart-for-woocommerce' ), 'popup', 'field_popup_buttons', 'snapcart-row-popup' );
-		$this->add_field( 'popup_details', __( 'Product details', 'snapcart-for-woocommerce' ), 'popup', 'field_popup_details', 'snapcart-row-popup' );
-		$this->add_field( 'autodismiss_seconds', __( 'Close automatically', 'snapcart-for-woocommerce' ), 'popup', 'field_autodismiss', 'snapcart-row-popup' );
+		$this->add_field( 'autodismiss_seconds', __( 'Close Automatically', 'snapcart-for-woocommerce' ), 'popup', 'field_autodismiss', 'snapcart-row-popup' );
 
-		$this->add_section(
-			'style',
-			__( 'Styling', 'snapcart-for-woocommerce' ),
-			__( 'Match the confirmation to the rest of your store. Square corners suit a bold, editorial look; softer corners feel friendlier.', 'snapcart-for-woocommerce' ),
-			'',
-			__( 'These settings shape the add-to-cart confirmation. Turn the confirmation on to use them.', 'snapcart-for-woocommerce' )
-		);
+		$this->add_group( 'popup_appearance', 'popup', __( 'Appearance', 'snapcart-for-woocommerce' ) );
 
-		$this->add_field( 'popup_radius', __( 'Popup corners', 'snapcart-for-woocommerce' ), 'style', 'field_popup_radius', 'snapcart-row-popup' );
-		$this->add_field( 'button_radius', __( 'Button corners', 'snapcart-for-woocommerce' ), 'style', 'field_button_radius', 'snapcart-row-popup' );
-		$this->add_field( 'accent_color', __( 'Button colours', 'snapcart-for-woocommerce' ), 'style', 'field_accent_color', 'snapcart-row-popup' );
+		$this->add_field( 'popup_style', __( 'Layout', 'snapcart-for-woocommerce' ), 'popup_appearance', 'field_popup_style', 'snapcart-row-popup snapcart-row-layout' );
+		$this->add_field( 'overlay_color', __( 'Backdrop', 'snapcart-for-woocommerce' ), 'popup_appearance', 'field_overlay_color', 'snapcart-row-popup snapcart-row-centered' );
+		$this->add_field( 'popup_surface', __( 'Popup Colors', 'snapcart-for-woocommerce' ), 'popup_appearance', 'field_popup_surface', 'snapcart-row-popup' );
+		$this->add_field( 'popup_radius', __( 'Corners', 'snapcart-for-woocommerce' ), 'popup_appearance', 'field_popup_radius', 'snapcart-row-popup' );
 
-		$this->add_section(
+		$this->add_group( 'popup_content', 'popup', __( 'Content', 'snapcart-for-woocommerce' ) );
+
+		$this->add_field( 'popup_heading', __( 'Headline', 'snapcart-for-woocommerce' ), 'popup_content', 'field_popup_heading', 'snapcart-row-popup' );
+		$this->add_field( 'popup_message', __( 'Supporting Text', 'snapcart-for-woocommerce' ), 'popup_content', 'field_popup_message', 'snapcart-row-popup' );
+		$this->add_field( 'popup_details', __( 'Show or Hide', 'snapcart-for-woocommerce' ), 'popup_content', 'field_popup_details', 'snapcart-row-popup' );
+
+		$this->add_group( 'popup_buttons', 'popup', __( 'Buttons', 'snapcart-for-woocommerce' ) );
+
+		$this->add_field( 'popup_buttons', __( 'Labels', 'snapcart-for-woocommerce' ), 'popup_buttons', 'field_popup_buttons', 'snapcart-row-popup' );
+		$this->add_field( 'accent_color', __( 'Colors', 'snapcart-for-woocommerce' ), 'popup_buttons', 'field_accent_color', 'snapcart-row-popup' );
+		$this->add_field( 'button_radius', __( 'Corners', 'snapcart-for-woocommerce' ), 'popup_buttons', 'field_button_radius', 'snapcart-row-popup' );
+
+		/*
+		 * Suggestions — which products to pull, then how the strip looks.
+		 */
+		$this->add_tab(
 			'recommend',
-			__( 'Product suggestions', 'snapcart-for-woocommerce' ),
+			__( 'Product Suggestions', 'snapcart-for-woocommerce' ),
 			__( 'Add a scrollable strip of products to the confirmation to lift average order value. Off by default; when it is off, no extra product data is loaded at all.', 'snapcart-for-woocommerce' ),
 			__( 'Suggestions', 'snapcart-for-woocommerce' ),
 			__( 'Suggestions appear inside the add-to-cart confirmation. Turn the confirmation on to use them.', 'snapcart-for-woocommerce' )
 		);
 
 		$this->add_field( 'enable_recommendations', __( 'Suggestions', 'snapcart-for-woocommerce' ), 'recommend', 'field_enable_recommendations', 'snapcart-row-popup' );
-		$this->add_field( 'recommend_heading', __( 'Strip heading', 'snapcart-for-woocommerce' ), 'recommend', 'field_recommend_heading', 'snapcart-row-popup snapcart-row-rec' );
-		$this->add_field( 'recommend_source', __( 'Which products', 'snapcart-for-woocommerce' ), 'recommend', 'field_recommend_source', 'snapcart-row-popup snapcart-row-rec' );
-		$this->add_field( 'recommend_products', __( 'Chosen products', 'snapcart-for-woocommerce' ), 'recommend', 'field_recommend_products', 'snapcart-row-popup snapcart-row-rec snapcart-row-handpicked' );
-		$this->add_field( 'recommend_count', __( 'How many', 'snapcart-for-woocommerce' ), 'recommend', 'field_recommend_count', 'snapcart-row-popup snapcart-row-rec' );
-		$this->add_field( 'recommend_show_price', __( 'Show prices', 'snapcart-for-woocommerce' ), 'recommend', 'field_recommend_show_price', 'snapcart-row-popup snapcart-row-rec' );
 
-		$this->add_section(
+		$this->add_group( 'recommend_source_group', 'recommend', __( 'Which Products', 'snapcart-for-woocommerce' ) );
+
+		$this->add_field( 'recommend_source', __( 'Source', 'snapcart-for-woocommerce' ), 'recommend_source_group', 'field_recommend_source', 'snapcart-row-popup snapcart-row-rec' );
+		$this->add_field( 'recommend_products', __( 'Chosen Products', 'snapcart-for-woocommerce' ), 'recommend_source_group', 'field_recommend_products', 'snapcart-row-popup snapcart-row-rec snapcart-row-handpicked' );
+		$this->add_field( 'recommend_count', __( 'How Many', 'snapcart-for-woocommerce' ), 'recommend_source_group', 'field_recommend_count', 'snapcart-row-popup snapcart-row-rec' );
+
+		$this->add_group( 'recommend_display', 'recommend', __( 'Appearance', 'snapcart-for-woocommerce' ) );
+
+		$this->add_field( 'recommend_heading', __( 'Heading', 'snapcart-for-woocommerce' ), 'recommend_display', 'field_recommend_heading', 'snapcart-row-popup snapcart-row-rec' );
+		$this->add_field( 'recommend_show_price', __( 'Show Prices', 'snapcart-for-woocommerce' ), 'recommend_display', 'field_recommend_show_price', 'snapcart-row-popup snapcart-row-rec' );
+		$this->add_field( 'arrow_radius', __( 'Arrow Corners', 'snapcart-for-woocommerce' ), 'recommend_display', 'field_arrow_radius', 'snapcart-row-popup snapcart-row-rec' );
+
+		$this->add_tab(
 			'advanced',
 			__( 'Data', 'snapcart-for-woocommerce' ),
 			__( 'What happens to your settings if you ever remove the plugin.', 'snapcart-for-woocommerce' )
 		);
 
-		$this->add_field( 'delete_data', __( 'On deletion', 'snapcart-for-woocommerce' ), 'advanced', 'field_delete_data' );
+		$this->add_field( 'delete_data', __( 'On Deletion', 'snapcart-for-woocommerce' ), 'advanced', 'field_delete_data' );
 	}
 
 	/**
@@ -289,7 +331,33 @@ final class SnapCart_Admin {
 	 *                            confirmation they belong to is switched off.
 	 * @return void
 	 */
-	private function add_section( $id, $title, $description, $tab_label = '', $notice = '' ) {
+	private function add_tab( $id, $title, $description, $tab_label = '', $notice = '' ) {
+		$this->tabs[ $id ] = array(
+			'title'       => $title,
+			'label'       => '' === $tab_label ? $title : $tab_label,
+			'description' => $description,
+			'notice'      => $notice,
+		);
+
+		// Every tab has one unnamed group, so simple tabs need no extra call.
+		$this->add_group( $id, $id );
+	}
+
+	/**
+	 * Register a group of fields inside a tab.
+	 *
+	 * Groups let one tab hold several labelled clusters of settings, so a long
+	 * tab stays readable without splitting related options across tabs. A group
+	 * whose fields are all hidden is collapsed by the settings script, heading
+	 * included.
+	 *
+	 * @param string $id       Group id, used as the settings section id.
+	 * @param string $tab      Tab the group belongs to.
+	 * @param string $title    Sub-heading, or empty for none.
+	 * @param string $subtitle Optional line under the sub-heading.
+	 * @return void
+	 */
+	private function add_group( $id, $tab, $title = '', $subtitle = '' ) {
 		add_settings_section(
 			'snapcart_' . $id,
 			$title,
@@ -297,11 +365,10 @@ final class SnapCart_Admin {
 			self::PAGE_SLUG
 		);
 
-		$this->tabs[ $id ] = array(
-			'title'       => $title,
-			'label'       => '' === $tab_label ? $title : $tab_label,
-			'description' => $description,
-			'notice'      => $notice,
+		$this->groups[ $id ] = array(
+			'tab'      => $tab,
+			'title'    => $title,
+			'subtitle' => $subtitle,
 		);
 	}
 
@@ -316,6 +383,10 @@ final class SnapCart_Admin {
 	 * @return void
 	 */
 	private function add_field( $id, $title, $section, $callback, $class = '' ) {
+		$this->group_field_counts[ $section ] = isset( $this->group_field_counts[ $section ] )
+			? $this->group_field_counts[ $section ] + 1
+			: 1;
+
 		add_settings_field(
 			'snapcart_' . $id,
 			$title,
@@ -411,10 +482,11 @@ final class SnapCart_Admin {
 	 */
 	private function field_label( $key ) {
 		$labels = array(
-			'icon_style'    => __( 'Icon shape', 'snapcart-for-woocommerce' ),
-			'popup_style'   => __( 'Confirmation appearance', 'snapcart-for-woocommerce' ),
-			'popup_radius'  => __( 'Popup corners', 'snapcart-for-woocommerce' ),
-			'button_radius' => __( 'Button corners', 'snapcart-for-woocommerce' ),
+			'icon_style'    => __( 'Icon Shape', 'snapcart-for-woocommerce' ),
+			'popup_style'   => __( 'Confirmation Layout', 'snapcart-for-woocommerce' ),
+			'popup_radius'  => __( 'Popup Corners', 'snapcart-for-woocommerce' ),
+			'button_radius' => __( 'Button Corners', 'snapcart-for-woocommerce' ),
+			'arrow_radius'  => __( 'Arrow Corners', 'snapcart-for-woocommerce' ),
 		);
 
 		return isset( $labels[ $key ] ) ? $labels[ $key ] : $key;
@@ -440,10 +512,10 @@ final class SnapCart_Admin {
 	}
 
 	/**
-	 * Render a colour picker.
+	 * Render a color picker.
 	 *
 	 * @param string $key      Setting key.
-	 * @param string $fallback Default colour shown when nothing is set.
+	 * @param string $fallback Default color shown when nothing is set.
 	 * @return void
 	 */
 	private function color_input( $key, $fallback ) {
@@ -538,7 +610,7 @@ final class SnapCart_Admin {
 	 */
 	public function field_icon_style() {
 		$labels = array(
-			'bag'      => __( 'Shopping bag', 'snapcart-for-woocommerce' ),
+			'bag'      => __( 'Shopping Bag', 'snapcart-for-woocommerce' ),
 			'cart'     => __( 'Trolley', 'snapcart-for-woocommerce' ),
 			'basket'   => __( 'Basket', 'snapcart-for-woocommerce' ),
 			'tote'     => __( 'Tote', 'snapcart-for-woocommerce' ),
@@ -586,7 +658,7 @@ final class SnapCart_Admin {
 	}
 
 	/**
-	 * Count badge colours.
+	 * Count badge colors.
 	 *
 	 * @return void
 	 */
@@ -608,21 +680,21 @@ final class SnapCart_Admin {
 		echo '</div>';
 
 		echo '<p class="snapcart-stack snapcart-stack--inline">';
-		echo '<span class="snapcart-stack__label">' . esc_html__( 'Border opacity', 'snapcart-for-woocommerce' ) . '</span>';
+		echo '<span class="snapcart-stack__label">' . esc_html__( 'Border Opacity', 'snapcart-for-woocommerce' ) . '</span>';
 		$this->number_input( 'badge_border_opacity', 0, 100, '%' );
 		echo '</p>';
 
-		$this->description( __( 'The border is always 1px and solid. Clear its colour to remove it altogether. Clear a background or number colour to inherit your theme instead.', 'snapcart-for-woocommerce' ) );
+		$this->description( __( 'The border is always 1px and solid. Clear its color to remove it altogether. Clear a background or number color to inherit your theme instead.', 'snapcart-for-woocommerce' ) );
 	}
 
 	/**
-	 * Cart icon colour.
+	 * Cart icon color.
 	 *
 	 * @return void
 	 */
 	public function field_icon_color() {
 		$this->color_input( 'icon_color', '#ffffff' );
-		$this->description( __( 'White suits a dark header. Clear this field to inherit your header text colour instead, which is the safer choice if your header is light or changes colour on scroll.', 'snapcart-for-woocommerce' ) );
+		$this->description( __( 'White suits a dark header. Clear this field to inherit your header text color instead, which is the safer choice if your header is light or changes color on scroll.', 'snapcart-for-woocommerce' ) );
 	}
 
 	/**
@@ -684,11 +756,11 @@ final class SnapCart_Admin {
 			'popup_style',
 			array(
 				'center' => array(
-					'label'   => __( 'Centred dialog', 'snapcart-for-woocommerce' ),
+					'label'   => __( 'Centred Dialog', 'snapcart-for-woocommerce' ),
 					'preview' => '<span class="snapcart-preview snapcart-preview--center"><span class="snapcart-preview__card"></span></span>',
 				),
 				'toast'  => array(
-					'label'   => __( 'Corner notice', 'snapcart-for-woocommerce' ),
+					'label'   => __( 'Corner Notice', 'snapcart-for-woocommerce' ),
 					'preview' => '<span class="snapcart-preview snapcart-preview--toast"><span class="snapcart-preview__card"></span></span>',
 				),
 			),
@@ -729,13 +801,13 @@ final class SnapCart_Admin {
 	 */
 	public function field_popup_buttons() {
 		echo '<p class="snapcart-stack">';
-		echo '<span class="snapcart-stack__label">' . esc_html__( 'Main button', 'snapcart-for-woocommerce' ) . '</span>';
+		echo '<span class="snapcart-stack__label">' . esc_html__( 'Main Button', 'snapcart-for-woocommerce' ) . '</span>';
 		$this->text_input( 'popup_primary_label', __( 'View cart', 'snapcart-for-woocommerce' ) );
 		echo '</p>';
 
 		echo '<p class="snapcart-stack">';
-		echo '<span class="snapcart-stack__label">' . esc_html__( 'Second button', 'snapcart-for-woocommerce' ) . '</span>';
-		$this->text_input( 'popup_secondary_label', __( 'Keep shopping', 'snapcart-for-woocommerce' ) );
+		echo '<span class="snapcart-stack__label">' . esc_html__( 'Second Button', 'snapcart-for-woocommerce' ) . '</span>';
+		$this->text_input( 'popup_secondary_label', __( 'Continue shopping', 'snapcart-for-woocommerce' ) );
 		echo '</p>';
 	}
 
@@ -745,9 +817,63 @@ final class SnapCart_Admin {
 	 * @return void
 	 */
 	public function field_popup_details() {
+		$this->toggle( 'popup_show_tick', __( 'Show the green tick beside the headline', 'snapcart-for-woocommerce' ) );
+		$this->toggle( 'popup_show_message', __( 'Show the supporting line under the headline', 'snapcart-for-woocommerce' ) );
 		$this->toggle( 'popup_show_image', __( 'Show the product photo', 'snapcart-for-woocommerce' ) );
 		$this->toggle( 'popup_show_price', __( 'Show the price', 'snapcart-for-woocommerce' ) );
-		$this->description( __( 'Prices follow your tax display settings and any active sale price.', 'snapcart-for-woocommerce' ) );
+		$this->description( __( 'Anything switched off is left out of the page entirely rather than hidden with CSS. Prices follow your tax display settings and any active sale price.', 'snapcart-for-woocommerce' ) );
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| Fields — styling
+	|--------------------------------------------------------------------------
+	*/
+
+	/**
+	 * Popup background and border colors.
+	 *
+	 * @return void
+	 */
+	public function field_popup_surface() {
+		echo '<div class="snapcart-color-pair">';
+
+		echo '<span class="snapcart-color-pair__item"><span class="snapcart-color-pair__label">' . esc_html__( 'Background', 'snapcart-for-woocommerce' ) . '</span>';
+		$this->color_input( 'popup_bg', '#ffffff' );
+		echo '</span>';
+
+		echo '<span class="snapcart-color-pair__item"><span class="snapcart-color-pair__label">' . esc_html__( 'Border', 'snapcart-for-woocommerce' ) . '</span>';
+		$this->color_input( 'popup_border', '#e6e7eb' );
+		echo '</span>';
+
+		echo '</div>';
+
+		echo '<p class="snapcart-stack snapcart-stack--inline">';
+		echo '<span class="snapcart-stack__label">' . esc_html__( 'Border Opacity', 'snapcart-for-woocommerce' ) . '</span>';
+		$this->number_input( 'popup_border_opacity', 0, 100, '%' );
+		echo '</p>';
+
+		$this->description( __( 'The border is always 1px and solid. Clear its color to remove it altogether.', 'snapcart-for-woocommerce' ) );
+	}
+
+	/**
+	 * Backdrop color and opacity behind the centred dialog.
+	 *
+	 * @return void
+	 */
+	public function field_overlay_color() {
+		echo '<div class="snapcart-color-pair">';
+		echo '<span class="snapcart-color-pair__item"><span class="snapcart-color-pair__label">' . esc_html__( 'Color', 'snapcart-for-woocommerce' ) . '</span>';
+		$this->color_input( 'overlay_color', '#101218' );
+		echo '</span>';
+		echo '</div>';
+
+		echo '<p class="snapcart-stack snapcart-stack--inline">';
+		echo '<span class="snapcart-stack__label">' . esc_html__( 'Opacity', 'snapcart-for-woocommerce' ) . '</span>';
+		$this->number_input( 'overlay_opacity', 0, 100, '%' );
+		echo '</p>';
+
+		$this->description( __( 'The dimmed layer behind the centred dialog. A lower opacity keeps more of your page visible; a higher one puts more focus on the confirmation.', 'snapcart-for-woocommerce' ) );
 	}
 
 	/**
@@ -785,10 +911,27 @@ final class SnapCart_Admin {
 	}
 
 	/**
+	 * Corner radius of the suggestion carousel arrows.
+	 *
+	 * @return void
+	 */
+	public function field_arrow_radius() {
+		$this->radio_cards(
+			'arrow_radius',
+			array(
+				'sharp'  => $this->radius_choice( __( 'Sharp', 'snapcart-for-woocommerce' ), 'sharp' ),
+				'soft'   => $this->radius_choice( __( 'Soft', 'snapcart-for-woocommerce' ), 'soft' ),
+				'circle' => $this->radius_choice( __( 'Circle', 'snapcart-for-woocommerce' ), 'circle' ),
+			),
+			__( 'Shape of the two arrows that scroll the strip. They appear for visitors with a mouse; on a touch screen the strip is swiped instead.', 'snapcart-for-woocommerce' )
+		);
+	}
+
+	/**
 	 * Build one card for a corner radius picker.
 	 *
 	 * @param string $label   Visible label.
-	 * @param string $variant Preview modifier: sharp, soft, round or pill.
+	 * @param string $variant Preview modifier: sharp, soft, round, pill or circle.
 	 * @return array
 	 */
 	private function radius_choice( $label, $variant ) {
@@ -799,7 +942,7 @@ final class SnapCart_Admin {
 	}
 
 	/**
-	 * Accent colour.
+	 * Accent color.
 	 *
 	 * @return void
 	 */
@@ -819,7 +962,7 @@ final class SnapCart_Admin {
 
 		echo '</div>';
 
-		$this->description( __( 'Applies to the main button. Clear the label colour and SnapCart picks black or white for you, whichever reads better on the background you chose.', 'snapcart-for-woocommerce' ) );
+		$this->description( __( 'Applies to the main button. Clear the label color and SnapCart picks black or white for you, whichever reads better on the background you chose.', 'snapcart-for-woocommerce' ) );
 	}
 
 	/**
@@ -865,7 +1008,7 @@ final class SnapCart_Admin {
 	public function field_recommend_heading() {
 		$this->text_input(
 			'recommend_heading',
-			__( 'You might also like', 'snapcart-for-woocommerce' ),
+			__( 'Discover more', 'snapcart-for-woocommerce' ),
 			__( 'Leave blank to use the default wording.', 'snapcart-for-woocommerce' )
 		);
 	}
@@ -999,7 +1142,7 @@ final class SnapCart_Admin {
 						settings_fields( self::OPTION_GROUP );
 						$this->render_tabs();
 						$this->render_panels();
-						submit_button( __( 'Save changes', 'snapcart-for-woocommerce' ) );
+						submit_button( __( 'Save Changes', 'snapcart-for-woocommerce' ) );
 						?>
 					</form>
 				</div>
@@ -1017,7 +1160,7 @@ final class SnapCart_Admin {
 	 * Render the tab strip.
 	 *
 	 * Uses WordPress's own `nav-tab` markup, so it inherits core admin styling
-	 * and looks native on every colour scheme without us shipping a theme for it.
+	 * and looks native on every color scheme without us shipping a theme for it.
 	 *
 	 * @return void
 	 */
@@ -1071,9 +1214,27 @@ final class SnapCart_Admin {
 				);
 			}
 
-			echo '<table class="form-table" role="presentation">';
-			do_settings_fields( self::PAGE_SLUG, 'snapcart_' . $id );
-			echo '</table>';
+			foreach ( $this->groups as $group_id => $group ) {
+				if ( $group['tab'] !== $id || empty( $this->group_field_counts[ $group_id ] ) ) {
+					continue;
+				}
+
+				echo '<div class="snapcart-group">';
+
+				if ( '' !== $group['title'] ) {
+					printf( '<h3 class="snapcart-group__title">%s</h3>', esc_html( $group['title'] ) );
+				}
+
+				if ( '' !== $group['subtitle'] ) {
+					printf( '<p class="snapcart-group__subtitle">%s</p>', esc_html( $group['subtitle'] ) );
+				}
+
+				echo '<table class="form-table" role="presentation">';
+				do_settings_fields( self::PAGE_SLUG, 'snapcart_' . $group_id );
+				echo '</table>';
+
+				echo '</div>';
+			}
 
 			echo '</div>';
 
@@ -1089,7 +1250,7 @@ final class SnapCart_Admin {
 	private function render_setup_card() {
 		?>
 		<div class="snapcart-card">
-			<h2 class="snapcart-card__title"><?php esc_html_e( 'Add the icon to your header', 'snapcart-for-woocommerce' ); ?></h2>
+			<h2 class="snapcart-card__title"><?php esc_html_e( 'Add the Icon to Your Header', 'snapcart-for-woocommerce' ); ?></h2>
 
 			<p><?php esc_html_e( 'Using a block theme or the site editor: search the block inserter for "Snap Cart".', 'snapcart-for-woocommerce' ); ?></p>
 
@@ -1136,7 +1297,7 @@ final class SnapCart_Admin {
 		}
 		?>
 		<div class="snapcart-card">
-			<h2 class="snapcart-card__title"><?php esc_html_e( 'Good to know', 'snapcart-for-woocommerce' ); ?></h2>
+			<h2 class="snapcart-card__title"><?php esc_html_e( 'Good to Know', 'snapcart-for-woocommerce' ); ?></h2>
 			<ul class="snapcart-notes">
 				<?php foreach ( $notes as $note ) : ?>
 					<li><?php echo esc_html( $note ); ?></li>
