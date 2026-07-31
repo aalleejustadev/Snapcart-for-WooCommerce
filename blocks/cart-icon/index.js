@@ -1,5 +1,5 @@
 /**
- * SnapCart "Cart Icon" block — editor registration.
+ * SnapCart "Snap Cart" block — editor registration.
  *
  * Written against the global `wp` packages with no build step, so the file that
  * ships is the file that runs. The front end is rendered in PHP; the editor
@@ -20,26 +20,26 @@
 	var TextControl = wp.components.TextControl;
 	var ExternalLink = wp.components.ExternalLink;
 
-	function BagIcon() {
-		return el(
-			'svg',
-			{
-				width: 24,
-				height: 24,
-				viewBox: '0 0 24 24',
-				fill: 'none',
-				stroke: 'currentColor',
-				strokeWidth: 1.6,
-				strokeLinecap: 'round',
-				strokeLinejoin: 'round',
-				'aria-hidden': 'true',
-				focusable: 'false',
-			},
-			el( 'path', {
-				d: 'M6 8h12l1.1 11.6a1.5 1.5 0 0 1-1.5 1.65H6.4a1.5 1.5 0 0 1-1.5-1.65L6 8Z',
-			} ),
-			el( 'path', { d: 'M9 10V6.75a3 3 0 0 1 6 0V10' } )
-		);
+	var blockData = window.SnapCartBlock || {};
+
+	// The path data comes from the plugin's own icon set, passed in by PHP so
+	// the preview matches whichever icon the store has chosen.
+	function CartIcon() {
+		var size = blockData.iconSize || 24;
+
+		return el( 'svg', {
+			width: size,
+			height: size,
+			viewBox: '0 0 24 24',
+			fill: 'none',
+			stroke: 'currentColor',
+			strokeWidth: 1.6,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+			'aria-hidden': 'true',
+			focusable: 'false',
+			dangerouslySetInnerHTML: { __html: blockData.iconPath || '' },
+		} );
 	}
 
 	wp.blocks.registerBlockType( 'snapcart/cart-icon', {
@@ -49,7 +49,7 @@
 			var preview = el(
 				'span',
 				{ className: 'snapcart-block-preview' },
-				el( BagIcon ),
+				el( CartIcon ),
 				label
 					? el( 'span', { className: 'snapcart-block-preview__label' }, label )
 					: null,
@@ -88,9 +88,7 @@
 							el(
 								ExternalLink,
 								{
-									href:
-										( window.SnapCartBlock && window.SnapCartBlock.settingsUrl ) ||
-										'#',
+									href: blockData.settingsUrl || '#',
 								},
 								__( 'Open SnapCart settings', 'snapcart-for-woocommerce' )
 							)

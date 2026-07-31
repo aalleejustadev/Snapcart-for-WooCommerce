@@ -3,7 +3,7 @@
 	"apiVersion": 3,
 	"name": "snapcart/cart-icon",
 	"version": "2.0.0",
-	"title": "Cart Icon",
+	"title": "Snap Cart",
 	"category": "woocommerce",
 	"icon": "cart",
 	"description": "A cart icon with a live item count that links straight to the cart.",

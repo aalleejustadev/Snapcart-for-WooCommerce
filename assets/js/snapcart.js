@@ -77,15 +77,120 @@
 	 * Count badge
 	 * ------------------------------------------------------------------ */
 
-	function bumpBadge() {
-		var badges = document.querySelectorAll( '.snapcart-count' );
+	var countTimer = null;
+	var countPending = false;
 
-		Array.prototype.forEach.call( badges, function ( badge ) {
+	function badges() {
+		return document.querySelectorAll( '.snapcart-count' );
+	}
+
+	function bumpBadge() {
+		Array.prototype.forEach.call( badges(), function ( badge ) {
 			badge.classList.add( 'snapcart-count--bump' );
 			window.setTimeout( function () {
 				badge.classList.remove( 'snapcart-count--bump' );
 			}, 220 );
 		} );
+	}
+
+	/**
+	 * Write a known count into every badge on the page.
+	 */
+	function applyCount( count ) {
+		if ( typeof count !== 'number' || isNaN( count ) || count < 0 ) {
+			return;
+		}
+
+		Array.prototype.forEach.call( badges(), function ( badge ) {
+			var previous = parseInt( badge.textContent, 10 );
+
+			badge.textContent = String( count );
+			badge.classList.toggle(
+				'snapcart-count--empty',
+				count < 1 && !! data.hideEmptyBadge
+			);
+
+			// Only celebrate items arriving, never leaving.
+			if ( ! isNaN( previous ) && count > previous ) {
+				badge.classList.add( 'snapcart-count--bump' );
+				window.setTimeout( function () {
+					badge.classList.remove( 'snapcart-count--bump' );
+				}, 220 );
+			}
+		} );
+	}
+
+	/**
+	 * Pull the count out of the fragments WooCommerce passed with an event,
+	 * so the common case costs no extra request.
+	 */
+	function countFromFragments( fragments ) {
+		if ( ! fragments || ! fragments[ '.snapcart-count' ] ) {
+			return null;
+		}
+
+		var holder = document.createElement( 'div' );
+		holder.innerHTML = fragments[ '.snapcart-count' ];
+
+		var node = holder.firstElementChild;
+		if ( ! node ) {
+			return null;
+		}
+
+		var count = parseInt( node.textContent, 10 );
+		return isNaN( count ) ? null : count;
+	}
+
+	/**
+	 * Ask the server for the current count. Used when an event carries no
+	 * fragments, which includes every cart page change and any site where cart
+	 * fragments have been switched off for performance.
+	 */
+	function fetchCount() {
+		if ( countPending || ! data.countUrl || ! window.fetch ) {
+			return;
+		}
+
+		countPending = true;
+
+		window
+			.fetch( data.countUrl, { credentials: 'same-origin' } )
+			.then( function ( response ) {
+				return response.ok ? response.json() : null;
+			} )
+			.then( function ( json ) {
+				if ( json && json.success && json.data ) {
+					applyCount( parseInt( json.data.count, 10 ) );
+				}
+			} )
+			.catch( function () {
+				/* The badge keeps its current value until the next change. */
+			} )
+			.then( function () {
+				countPending = false;
+			} );
+	}
+
+	/**
+	 * Refresh the badge after any cart change. Several WooCommerce events fire
+	 * together for a single action, so the work is collapsed into one pass.
+	 */
+	function refreshCount( fragments ) {
+		var fromFragments = countFromFragments( fragments );
+
+		if ( null !== fromFragments ) {
+			applyCount( fromFragments );
+			return;
+		}
+
+		if ( countTimer ) {
+			window.clearTimeout( countTimer );
+		}
+
+		countTimer = window.setTimeout( function () {
+			countTimer = null;
+			fetchCount();
+		}, 60 );
 	}
 
 	/* ---------------------------------------------------------------------
@@ -479,7 +584,14 @@
 	}
 
 	function handleAdd( fragments ) {
-		window.setTimeout( bumpBadge, 60 );
+		// WooCommerce swaps the badge in itself when fragments are active; this
+		// keeps it right when they are not, and animates the change either way.
+		window.setTimeout( function () {
+			refreshCount( fragments );
+			if ( ! fragments ) {
+				bumpBadge();
+			}
+		}, 60 );
 
 		if ( ! data.popupEnabled ) {
 			return;
@@ -508,6 +620,28 @@
 		'wc-blocks_added_to_cart experimental__woocommerce_blocks-cart-add-item',
 		function () {
 			handleAdd( null );
+		}
+	);
+
+	// Every other way a cart can change: removing a line or editing a quantity
+	// on the cart page, emptying the cart, the mini-cart, and the same actions
+	// inside the WooCommerce cart block.
+	//
+	// Deliberately excludes wc_fragments_loaded and wc_fragments_refreshed.
+	// Those fire on ordinary page loads, and when they fire WooCommerce has
+	// already replaced the badge itself — listening to them would cost a
+	// request on every page view for no benefit.
+	$( document.body ).on(
+		[
+			'removed_from_cart',
+			'updated_wc_div',
+			'updated_cart_totals',
+			'wc_cart_emptied',
+			'wc-blocks_removed_from_cart',
+			'wc-blocks_cart_update_quantity',
+		].join( ' ' ),
+		function ( event, fragments ) {
+			refreshCount( fragments );
 		}
 	);
 

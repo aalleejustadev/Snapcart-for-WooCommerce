@@ -251,7 +251,7 @@ final class SnapCart_Admin {
 
 		$this->add_field( 'popup_radius', __( 'Popup corners', 'snapcart-for-woocommerce' ), 'style', 'field_popup_radius', 'snapcart-row-popup' );
 		$this->add_field( 'button_radius', __( 'Button corners', 'snapcart-for-woocommerce' ), 'style', 'field_button_radius', 'snapcart-row-popup' );
-		$this->add_field( 'accent_color', __( 'Button colour', 'snapcart-for-woocommerce' ), 'style', 'field_accent_color', 'snapcart-row-popup' );
+		$this->add_field( 'accent_color', __( 'Button colours', 'snapcart-for-woocommerce' ), 'style', 'field_accent_color', 'snapcart-row-popup' );
 
 		$this->add_section(
 			'recommend',
@@ -538,9 +538,11 @@ final class SnapCart_Admin {
 	 */
 	public function field_icon_style() {
 		$labels = array(
-			'bag'    => __( 'Shopping bag', 'snapcart-for-woocommerce' ),
-			'cart'   => __( 'Trolley', 'snapcart-for-woocommerce' ),
-			'basket' => __( 'Basket', 'snapcart-for-woocommerce' ),
+			'bag'      => __( 'Shopping bag', 'snapcart-for-woocommerce' ),
+			'cart'     => __( 'Trolley', 'snapcart-for-woocommerce' ),
+			'basket'   => __( 'Basket', 'snapcart-for-woocommerce' ),
+			'tote'     => __( 'Tote', 'snapcart-for-woocommerce' ),
+			'handbag'  => __( 'Handbag', 'snapcart-for-woocommerce' ),
 		);
 
 		$choices = array();
@@ -667,7 +669,7 @@ final class SnapCart_Admin {
 		$this->toggle(
 			'enable_popup',
 			__( 'Show a confirmation when a shopper adds an item', 'snapcart-for-woocommerce' ),
-			__( 'Turn this off and the cart icon and live count keep working on their own.', 'snapcart-for-woocommerce' ),
+			__( 'This does not affect the cart icon and live count.', 'snapcart-for-woocommerce' ),
 			'snapcart-enable-popup'
 		);
 	}
@@ -802,8 +804,22 @@ final class SnapCart_Admin {
 	 * @return void
 	 */
 	public function field_accent_color() {
-		$this->color_input( 'accent_color', '#111111' );
-		$this->description( __( 'Used for the main button. The label switches between black and white automatically so it stays readable.', 'snapcart-for-woocommerce' ) );
+		$swatches = array(
+			'accent_color'      => array( __( 'Background', 'snapcart-for-woocommerce' ), '#000000' ),
+			'accent_text_color' => array( __( 'Label', 'snapcart-for-woocommerce' ), '#ffffff' ),
+		);
+
+		echo '<div class="snapcart-color-pair">';
+
+		foreach ( $swatches as $key => $swatch ) {
+			echo '<span class="snapcart-color-pair__item"><span class="snapcart-color-pair__label">' . esc_html( $swatch[0] ) . '</span>';
+			$this->color_input( $key, $swatch[1] );
+			echo '</span>';
+		}
+
+		echo '</div>';
+
+		$this->description( __( 'Applies to the main button. Clear the label colour and SnapCart picks black or white for you, whichever reads better on the background you chose.', 'snapcart-for-woocommerce' ) );
 	}
 
 	/**
@@ -1075,7 +1091,7 @@ final class SnapCart_Admin {
 		<div class="snapcart-card">
 			<h2 class="snapcart-card__title"><?php esc_html_e( 'Add the icon to your header', 'snapcart-for-woocommerce' ); ?></h2>
 
-			<p><?php esc_html_e( 'Using a block theme or the site editor: search the block inserter for "Cart Icon".', 'snapcart-for-woocommerce' ); ?></p>
+			<p><?php esc_html_e( 'Using a block theme or the site editor: search the block inserter for "Snap Cart".', 'snapcart-for-woocommerce' ); ?></p>
 
 			<p><?php esc_html_e( 'Using a classic theme or a header builder: drop this shortcode into any HTML, shortcode or widget area.', 'snapcart-for-woocommerce' ); ?></p>
 

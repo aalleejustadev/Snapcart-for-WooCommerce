@@ -73,6 +73,13 @@ final class SnapCart_Frontend {
 		// WooCommerce's own AJAX endpoint is used instead of admin-ajax.php so
 		// the request never boots the admin.
 		add_action( 'wc_ajax_snapcart_notify', array( $this, 'ajax_notify' ) );
+
+		// The badge must stay correct when the cart changes anywhere other than
+		// an add — removing a line on the cart page, emptying it, or editing a
+		// quantity. Cart fragments cover some of those, but plenty of themes let
+		// shop owners switch fragments off for performance, so the count is
+		// available on its own endpoint too.
+		add_action( 'wc_ajax_snapcart_count', array( $this, 'ajax_count' ) );
 	}
 
 	/*
@@ -82,7 +89,7 @@ final class SnapCart_Frontend {
 	*/
 
 	/**
-	 * Register the "Cart Icon" block from its block.json metadata.
+	 * Register the "Snap Cart" block from its block.json metadata.
 	 *
 	 * Rendering is shared with the shortcode, so both stay in step.
 	 *
@@ -109,10 +116,18 @@ final class SnapCart_Frontend {
 			return;
 		}
 
+		$paths = SnapCart_Icons::paths();
+		$style = SnapCart_Icons::normalize( SnapCart_Options::get( 'icon_style' ) );
+
 		wp_add_inline_script(
 			'snapcart-cart-icon-editor-script',
 			'window.SnapCartBlock = ' . wp_json_encode(
-				array( 'settingsUrl' => admin_url( 'admin.php?page=' . SnapCart_Admin::PAGE_SLUG ) )
+				array(
+					'settingsUrl' => admin_url( 'admin.php?page=' . SnapCart_Admin::PAGE_SLUG ),
+					// So the editor preview shows the icon the store actually uses.
+					'iconPath'    => $paths[ $style ],
+					'iconSize'    => (int) SnapCart_Options::get( 'icon_size' ),
+				)
 			) . ';',
 			'before'
 		);
@@ -252,8 +267,8 @@ final class SnapCart_Frontend {
 	/**
 	 * The chosen icon as an inline SVG.
 	 *
-	 * All three icons inherit `currentColor`, so they take the colour of the
-	 * surrounding header on any theme.
+	 * Every icon is drawn with `currentColor`, so it follows the icon colour
+	 * setting or, when that is cleared, the surrounding header.
 	 *
 	 * @return string
 	 */
@@ -449,6 +464,19 @@ final class SnapCart_Frontend {
 		wp_send_json_success( $this->consume_payload() );
 	}
 
+	/**
+	 * Return how many items are in the caller's cart.
+	 *
+	 * Read-only, changes nothing, and reveals only what the caller's own
+	 * session already holds, so it carries no nonce — a nonce would simply go
+	 * stale inside a cached page and break the badge.
+	 *
+	 * @return void
+	 */
+	public function ajax_count() {
+		wp_send_json_success( array( 'count' => $this->get_cart_count() ) );
+	}
+
 	/*
 	|--------------------------------------------------------------------------
 	| Assets
@@ -513,14 +541,18 @@ final class SnapCart_Frontend {
 			$this->prevent_page_cache();
 		}
 
+		$has_wc_ajax = class_exists( 'WC_AJAX' );
+
 		return array(
-			'popupEnabled' => $this->popup_enabled(),
-			'popupStyle'   => (string) SnapCart_Options::get( 'popup_style' ),
-			'autoDismiss'  => (int) SnapCart_Options::get( 'autodismiss_seconds' ) * 1000,
-			'notify'       => $notify,
-			'ajaxUrl'      => class_exists( 'WC_AJAX' ) ? WC_AJAX::get_endpoint( 'snapcart_notify' ) : '',
-			'nonce'        => wp_create_nonce( 'snapcart_notify' ),
-			'i18n'         => array(
+			'popupEnabled'   => $this->popup_enabled(),
+			'popupStyle'     => (string) SnapCart_Options::get( 'popup_style' ),
+			'autoDismiss'    => (int) SnapCart_Options::get( 'autodismiss_seconds' ) * 1000,
+			'hideEmptyBadge' => SnapCart_Options::is_on( 'hide_empty_badge' ),
+			'notify'         => $notify,
+			'ajaxUrl'        => $has_wc_ajax ? WC_AJAX::get_endpoint( 'snapcart_notify' ) : '',
+			'countUrl'       => $has_wc_ajax ? WC_AJAX::get_endpoint( 'snapcart_count' ) : '',
+			'nonce'          => wp_create_nonce( 'snapcart_notify' ),
+			'i18n'           => array(
 				'heading'   => SnapCart_Options::text( 'popup_heading', __( 'Added to your cart', 'snapcart-for-woocommerce' ) ),
 				'message'   => SnapCart_Options::text( 'popup_message', __( 'Saved to your cart and ready whenever you are.', 'snapcart-for-woocommerce' ) ),
 				'primary'   => SnapCart_Options::text( 'popup_primary_label', __( 'View cart', 'snapcart-for-woocommerce' ) ),
@@ -603,9 +635,14 @@ final class SnapCart_Frontend {
 			$rules[] = '--snapcart-badge-border:' . $this->rgba( $border, (int) SnapCart_Options::get( 'badge_border_opacity' ) );
 		}
 
-		// A readable label colour for text sitting on the accent.
-		$accent = (string) SnapCart_Options::get( 'accent_color' );
-		if ( '' !== $accent ) {
+		// Button label colour. When the shop owner clears it, a readable colour
+		// is derived from the button background instead of leaving it unset.
+		$accent      = (string) SnapCart_Options::get( 'accent_color' );
+		$accent_text = (string) SnapCart_Options::get( 'accent_text_color' );
+
+		if ( '' !== $accent_text ) {
+			$rules[] = '--snapcart-accent-contrast:' . $accent_text;
+		} elseif ( '' !== $accent ) {
 			$rules[] = '--snapcart-accent-contrast:' . $this->readable_contrast( $accent );
 		}
 

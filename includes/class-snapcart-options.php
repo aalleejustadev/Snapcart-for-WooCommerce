@@ -71,7 +71,8 @@ final class SnapCart_Options {
 			'autodismiss_seconds'    => 6,
 
 			// Styling.
-			'accent_color'           => '',
+			'accent_color'           => '#000000',
+			'accent_text_color'      => '#ffffff',
 			'popup_radius'           => 'soft',
 			'button_radius'          => 'soft',
 
@@ -95,7 +96,7 @@ final class SnapCart_Options {
 	 */
 	public static function choices() {
 		return array(
-			'icon_style'       => array( 'bag', 'cart', 'basket' ),
+			'icon_style'       => array( 'bag', 'cart', 'basket', 'tote', 'handbag' ),
 			'badge_position'   => array( 'right', 'left' ),
 			'link_target'      => array( 'cart', 'checkout' ),
 			'popup_style'      => array( 'center', 'toast' ),
@@ -143,7 +144,7 @@ final class SnapCart_Options {
 	 * @return string[]
 	 */
 	private static function color_keys() {
-		return array( 'icon_color', 'badge_bg', 'badge_color', 'badge_border', 'accent_color' );
+		return array( 'icon_color', 'badge_bg', 'badge_color', 'badge_border', 'accent_color', 'accent_text_color' );
 	}
 
 	/**

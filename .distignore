@@ -5,6 +5,7 @@
 .github
 .gitignore
 .distignore
+README.md
 .editorconfig
 .wordpress-org
 node_modules
