@@ -1,0 +1,21 @@
+# Files excluded from the plugin zip published to WordPress.org.
+# Used by `wp dist-archive` and the bundled build script.
+
+.git
+.github
+.gitignore
+.distignore
+.editorconfig
+.wordpress-org
+node_modules
+tools
+tests
+phpcs.xml
+phpcs.xml.dist
+composer.json
+composer.lock
+package.json
+package-lock.json
+*.zip
+*.log
+.DS_Store

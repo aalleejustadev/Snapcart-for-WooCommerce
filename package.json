@@ -1,0 +1,16 @@
+{
+	"name": "snapcart-for-woocommerce",
+	"version": "2.0.0",
+	"description": "A live cart icon for your header and a fast add-to-cart confirmation for WooCommerce.",
+	"author": "Ali Murtaza",
+	"license": "GPL-2.0-or-later",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "node tools/build.mjs",
+		"pot": "node tools/make-pot.mjs",
+		"zip": "npm run build && npm run pot && node tools/zip.mjs",
+		"lint:php": "phpcs",
+		"lint:php:fix": "phpcbf"
+	}
+}

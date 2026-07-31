@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<ruleset name="SnapCart for WooCommerce">
+	<description>Coding standards for SnapCart, matching what the WordPress.org plugin review runs.</description>
+
+	<file>.</file>
+
+	<exclude-pattern>/node_modules/</exclude-pattern>
+	<exclude-pattern>/build/</exclude-pattern>
+	<exclude-pattern>/vendor/</exclude-pattern>
+	<exclude-pattern>*.min.js</exclude-pattern>
+
+	<arg name="extensions" value="php"/>
+	<arg name="basepath" value="."/>
+	<arg name="colors"/>
+	<arg name="parallel" value="8"/>
+	<arg value="ps"/>
+
+	<rule ref="WordPress">
+		<!-- Handled by the build: the shipped files are the source files. -->
+		<exclude name="WordPress.WP.EnqueuedResourceParameters.MissingVersion"/>
+	</rule>
+
+	<rule ref="WordPress-Docs"/>
+	<rule ref="WordPressVIPMinimum.Performance.WPQueryParams">
+		<severity>3</severity>
+	</rule>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array" value="snapcart-for-woocommerce"/>
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array" value="snapcart,SnapCart,SNAPCART"/>
+		</properties>
+	</rule>
+
+	<config name="minimum_wp_version" value="6.5"/>
+	<config name="testVersion" value="7.4-"/>
+</ruleset>
