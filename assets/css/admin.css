@@ -168,6 +168,70 @@
 }
 
 /* -----------------------------------------------------------------------------
+ * Notices, shown as toasts
+ *
+ * The container stays where WordPress put it in the document, so the reading
+ * order is unchanged; only its painted position moves. It ignores pointer
+ * events so the empty container can never sit over the page, while each notice
+ * inside takes them back.
+ * -------------------------------------------------------------------------- */
+.snapcart-toasts {
+	position: fixed;
+	inset-block-end: 24px;
+	inset-inline-end: 24px;
+	z-index: 100000;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	width: min(380px, calc(100vw - 48px));
+	pointer-events: none;
+}
+
+.snapcart-toasts .notice {
+	margin: 0;
+	padding: 13px 16px;
+	padding-inline-end: 42px;
+	border-radius: var(--sc-radius);
+	box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
+	pointer-events: auto;
+	opacity: 0;
+	transform: translateY(12px);
+	transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.snapcart-toasts .notice.is-visible {
+	opacity: 1;
+	transform: none;
+}
+
+.snapcart-toasts .notice p {
+	margin: 0;
+	padding: 0;
+}
+
+.snapcart-toasts .notice-dismiss {
+	top: 50%;
+	transform: translateY(-50%);
+	inset-inline-end: 2px;
+	padding: 9px;
+}
+
+@media screen and (max-width: 782px) {
+	.snapcart-toasts {
+		inset-inline: 12px;
+		inset-block-end: 12px;
+		width: auto;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.snapcart-toasts .notice {
+		transition-duration: 0.01ms;
+		transform: none;
+	}
+}
+
+/* -----------------------------------------------------------------------------
  * Form table
  * -------------------------------------------------------------------------- */
 .snapcart-admin .form-table {
@@ -440,6 +504,153 @@
 	bottom: 4px;
 	width: 22px;
 	height: 13px;
+}
+
+/* Count position swatches: the real icon with the badge in each corner. */
+.snapcart-badge-preview {
+	position: relative;
+	display: inline-flex;
+	color: var(--sc-text);
+}
+
+.snapcart-badge-preview__icon {
+	display: block;
+}
+
+.snapcart-badge-preview__count {
+	position: absolute;
+	top: -7px;
+	min-width: 15px;
+	height: 15px;
+	padding: 0 4px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	font-size: 9px;
+	font-weight: 700;
+	line-height: 1;
+	border-radius: 999px;
+	background: #1d2327;
+	color: #fff;
+}
+
+.snapcart-badge-preview--right .snapcart-badge-preview__count {
+	right: -9px;
+}
+
+.snapcart-badge-preview--left .snapcart-badge-preview__count {
+	left: -9px;
+}
+
+/* -----------------------------------------------------------------------------
+ * Live cart icon preview
+ * -------------------------------------------------------------------------- */
+.snapcart-preview-stage {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 1px;
+	margin: 12px 0 10px;
+	border: 1px solid var(--sc-border);
+	border-radius: var(--sc-radius);
+	background: var(--sc-border);
+	overflow: hidden;
+}
+
+.snapcart-preview-stage__pane {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 78px;
+	padding: 14px;
+}
+
+.snapcart-preview-stage__pane--light {
+	background: #ffffff;
+	color: #1d2327;
+}
+
+.snapcart-preview-stage__pane--dark {
+	background: #14161a;
+	color: #ffffff;
+}
+
+.snapcart-preview-icon {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	line-height: 1;
+	/* Falls back to the pane's own color, which is how an empty icon color
+	   setting behaves on the front end: it inherits from the header. */
+	color: var(--preview-icon, inherit);
+}
+
+.snapcart-preview-icon__glyph {
+	position: relative;
+	display: inline-flex;
+}
+
+.snapcart-preview-icon__label {
+	font-size: 14px;
+	white-space: nowrap;
+}
+
+.snapcart-preview-icon__label[hidden] {
+	display: none;
+}
+
+.snapcart-preview-icon--label-left .snapcart-preview-icon__label {
+	order: -1;
+}
+
+.snapcart-preview-icon__svg {
+	display: block;
+}
+
+.snapcart-preview-icon__count {
+	position: absolute;
+	top: -8px;
+	min-width: 18px;
+	height: 18px;
+	padding: 0 5px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	font-size: 11px;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	line-height: 1;
+	border-radius: 999px;
+	background: var(--preview-badge-bg, #000);
+	color: var(--preview-badge-color, #fff);
+	border: 1px solid var(--preview-badge-border, transparent);
+}
+
+.snapcart-preview-icon--right .snapcart-preview-icon__count {
+	right: -10px;
+}
+
+.snapcart-preview-icon--left .snapcart-preview-icon__count {
+	left: -10px;
+}
+
+/* Label position swatches. */
+.snapcart-label-preview {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	color: var(--sc-text);
+	font-size: 12px;
+	line-height: 1;
+}
+
+.snapcart-label-preview__icon {
+	display: block;
+}
+
+.snapcart-label-preview--left .snapcart-label-preview__text {
+	order: -1;
 }
 
 /* Corner radius swatches. */

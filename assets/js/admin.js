@@ -137,6 +137,7 @@
 		// the setting rather than offering one that does nothing.
 		var centered = 'center' === $( '.snapcart-row-layout input:checked' ).val();
 
+		setRowsVisible( '.snapcart-row-label', $( '#snapcart-enable-label' ).is( ':checked' ) );
 		setRowsVisible( '.snapcart-row-popup', popupOn );
 		setRowsVisible( '.snapcart-row-centered', popupOn && centered );
 		setRowsVisible( '.snapcart-row-rec', recOn );
@@ -162,8 +163,107 @@
 
 	$( document ).on(
 		'change',
-		'#snapcart-enable-popup, #snapcart-enable-rec, #snapcart-rec-source, .snapcart-row-layout input',
+		'#snapcart-enable-popup, #snapcart-enable-rec, #snapcart-rec-source, #snapcart-enable-label, .snapcart-row-layout input',
 		sync
+	);
+
+	/* ---------------------------------------------------------------------
+	 * Live cart icon preview
+	 *
+	 * Answers "what will this look like?" while the shop owner is still
+	 * choosing, which no single control can do on its own. The server renders
+	 * it correctly first, so it is never blank or wrong before this runs.
+	 * ------------------------------------------------------------------ */
+
+	var preview = document.getElementById( 'snapcart-preview' );
+
+	function fieldValue( key ) {
+		return $( '[name="snapcart_settings[' + key + ']"]' ).not( ':radio' ).val();
+	}
+
+	function checkedValue( key ) {
+		return $( '[name="snapcart_settings[' + key + ']"]:checked' ).val();
+	}
+
+	/**
+	 * Turn a hex color and a 0-100 opacity into an rgba() string, mirroring
+	 * what the plugin does server-side so the preview matches the front end.
+	 */
+	function rgba( hex, percent ) {
+		var clean = String( hex || '' ).replace( '#', '' );
+
+		if ( 3 === clean.length ) {
+			clean = clean[ 0 ] + clean[ 0 ] + clean[ 1 ] + clean[ 1 ] + clean[ 2 ] + clean[ 2 ];
+		}
+
+		if ( 6 !== clean.length ) {
+			return 'transparent';
+		}
+
+		var alpha = Math.max( 0, Math.min( 100, parseInt( percent, 10 ) || 0 ) ) / 100;
+
+		return 'rgba(' +
+			parseInt( clean.slice( 0, 2 ), 16 ) + ',' +
+			parseInt( clean.slice( 2, 4 ), 16 ) + ',' +
+			parseInt( clean.slice( 4, 6 ), 16 ) + ',' + alpha + ')';
+	}
+
+	function updatePreview() {
+		if ( ! preview ) {
+			return;
+		}
+
+		var icons = strings.icons || {};
+		var shape = checkedValue( 'icon_style' );
+		var size = parseInt( fieldValue( 'icon_size' ), 10 ) || 24;
+		var position = checkedValue( 'badge_position' ) || 'right';
+		var border = fieldValue( 'badge_border' );
+		var labelOn = $( '#snapcart-enable-label' ).is( ':checked' );
+		// Native trim rather than $.trim, which jQuery 4 removed.
+		var labelText = String( fieldValue( 'label_text' ) || '' ).trim() || strings.defaultLabel || 'Cart';
+		var labelSide = checkedValue( 'label_position' ) || 'right';
+
+		Array.prototype.forEach.call(
+			preview.querySelectorAll( '.snapcart-preview-icon' ),
+			function ( node ) {
+				node.classList.toggle( 'snapcart-preview-icon--left', 'left' === position );
+				node.classList.toggle( 'snapcart-preview-icon--right', 'left' !== position );
+
+				var svg = node.querySelector( 'svg' );
+				if ( svg ) {
+					svg.setAttribute( 'width', size );
+					svg.setAttribute( 'height', size );
+					if ( icons[ shape ] ) {
+						svg.innerHTML = icons[ shape ];
+					}
+				}
+
+				var label = node.querySelector( '.snapcart-preview-icon__label' );
+				if ( label ) {
+					label.textContent = labelText;
+					label.hidden = ! labelOn;
+				}
+
+				node.classList.toggle( 'snapcart-preview-icon--label-left', labelOn && 'left' === labelSide );
+			}
+		);
+
+		// An empty color means "inherit", which in the preview means letting the
+		// pane's own light or dark text color show through.
+		preview.style.setProperty( '--preview-icon', fieldValue( 'icon_color' ) || '' );
+		preview.style.setProperty( '--preview-badge-bg', fieldValue( 'badge_bg' ) || 'transparent' );
+		preview.style.setProperty( '--preview-badge-color', fieldValue( 'badge_color' ) || '' );
+		preview.style.setProperty(
+			'--preview-badge-border',
+			border ? rgba( border, fieldValue( 'badge_border_opacity' ) ) : 'transparent'
+		);
+	}
+
+	// Covers typing, spinners, radio cards and the color picker's own events.
+	$( document ).on(
+		'change input',
+		'[name^="snapcart_settings[icon_"], [name^="snapcart_settings[badge_"], [name^="snapcart_settings[label_"], #snapcart-enable-label',
+		updatePreview
 	);
 
 	/* ---------------------------------------------------------------------
@@ -173,9 +273,104 @@
 	function initColorPickers() {
 		var fields = $( '.snapcart-color' );
 
-		if ( fields.length && typeof $.fn.wpColorPicker === 'function' ) {
-			fields.wpColorPicker();
+		if ( ! fields.length || typeof $.fn.wpColorPicker !== 'function' ) {
+			return;
 		}
+
+		// The picker writes the new value to the input after its own callback
+		// runs, so the preview is refreshed on the next tick rather than reading
+		// a value that is still one change behind.
+		fields.wpColorPicker( {
+			change: function () {
+				window.setTimeout( updatePreview, 0 );
+			},
+			clear: function () {
+				window.setTimeout( updatePreview, 0 );
+			},
+		} );
+	}
+
+	/* ---------------------------------------------------------------------
+	 * Notices, shown as toasts
+	 *
+	 * "Settings saved." is a confirmation nobody needs to keep reading, so it
+	 * clears itself. A validation error is not: those stay until dismissed.
+	 * ------------------------------------------------------------------ */
+
+	var TOAST_LIFETIME = 5000;
+
+	function dismissToast( notice ) {
+		// Reuse WordPress's own dismiss button when it has been added, so the
+		// notice is torn down exactly as a manual dismissal would.
+		var button = notice.querySelector( '.notice-dismiss' );
+
+		if ( button ) {
+			button.click();
+			return;
+		}
+
+		notice.classList.remove( 'is-visible' );
+		window.setTimeout( function () {
+			if ( notice.parentNode ) {
+				notice.parentNode.removeChild( notice );
+			}
+		}, 250 );
+	}
+
+	function initToasts() {
+		var stack = document.getElementById( 'snapcart-toasts' );
+
+		if ( ! stack ) {
+			return;
+		}
+
+		Array.prototype.forEach.call( stack.querySelectorAll( '.notice' ), function ( notice ) {
+			// Announced politely, since the toast sits away from where the eye
+			// is and a screen reader would otherwise never reach it in time.
+			if ( ! notice.getAttribute( 'role' ) ) {
+				notice.setAttribute( 'role', 'status' );
+			}
+
+			window.setTimeout( function () {
+				notice.classList.add( 'is-visible' );
+			}, 20 );
+
+			if ( ! notice.classList.contains( 'notice-success' ) ) {
+				return;
+			}
+
+			var remaining = TOAST_LIFETIME;
+			var timer = null;
+			var startedAt = 0;
+
+			function start() {
+				if ( timer || remaining <= 0 ) {
+					return;
+				}
+				startedAt = Date.now();
+				timer = window.setTimeout( function () {
+					dismissToast( notice );
+				}, remaining );
+			}
+
+			function pause() {
+				if ( ! timer ) {
+					return;
+				}
+				window.clearTimeout( timer );
+				timer = null;
+				remaining -= Date.now() - startedAt;
+			}
+
+			// Hovering or tabbing into the toast holds it, so it cannot vanish
+			// mid-read or while the dismiss button has focus.
+			notice.addEventListener( 'mouseenter', pause );
+			notice.addEventListener( 'mouseleave', start );
+			notice.addEventListener( 'focusin', pause );
+			notice.addEventListener( 'focusout', start );
+
+			start();
+		} );
 	}
 
 	/* ---------------------------------------------------------------------
@@ -226,6 +421,8 @@
 		initTabs();
 		initColorPickers();
 		initCopy();
+		initToasts();
 		sync();
+		updatePreview();
 	} );
 } )( jQuery );

@@ -5,7 +5,7 @@ Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
 Requires Plugins: woocommerce
-Stable tag: 2.0.7
+Stable tag: 2.0.11
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,6 +29,7 @@ SnapCart is deliberately small. There is no page builder, no dashboard, no accou
 = What you control =
 
 * **Icon** — five shapes covering how the biggest stores do it: shopping bag, trolley, basket, tote and handbag. Set the size and color, or clear the color to inherit your header so it stays legible on light and dark themes alike.
+* **Label** — optionally show wording such as "Cart" beside the icon, on either side. It takes the icon's color automatically, and a shortcode or block can override it in one place.
 * **Count badge** — position it left or right, set its background, number and border colors, choose the border's opacity, or hide the badge while the cart is empty.
 * **Destination** — send the icon to the cart page or straight to checkout.
 * **Confirmation style** — a centred dialog that commands attention, or a corner notice that never interrupts browsing.
@@ -58,7 +59,9 @@ Classic themes and header builders: use the shortcode.
 
 `[snapcart_icon]`
 
-`[snapcart_icon label="Cart"]`
+`[snapcart_icon label="Basket"]` — overrides the Label setting here only.
+
+`[snapcart_icon show_label="no"]` — hides the label at this placement.
 
 = Privacy =
 
@@ -131,6 +134,23 @@ Yes. Filters are available for the icon markup (`snapcart_icon_html`), its link 
 
 == Changelog ==
 
+= 2.0.11 =
+* Fixed: the cart icon color picker still offered white as its "Default", so resetting it disagreed with the black a fresh install actually uses.
+
+= 2.0.10 =
+* New: show wording such as "Cart" beside the icon, with a toggle, your own text, and a choice of which side it sits on. It inherits the icon color, so the two always match.
+* New: `show_label="yes|no"` shortcode attribute, alongside `label="..."`, so one placement can differ from the site-wide setting.
+* Changed: the cart icon now defaults to black rather than white, which suits the light headers most themes ship with.
+* Fixed: the item count now stays pinned to the icon when a label is shown, instead of sitting past the end of the wording.
+* Fixed: a settings screen script used a jQuery function removed in jQuery 4.
+
+= 2.0.9 =
+* Improved: "Settings saved." now appears as a toast in the corner and clears itself after five seconds, pausing if you hover or tab into it. Validation errors still stay put until dismissed.
+
+= 2.0.8 =
+* New: a live preview of your cart icon on the settings screen, shown on both a light and a dark header, updating as you change the shape, size, colours and count position.
+* Improved: the item count position is now chosen from two small pictures of your own icon rather than a dropdown.
+
 = 2.0.7 =
 * Improved: the settings screen is grouped so related options sit together. The backdrop now sits with the layout that produces it, all three button settings share one group, and the cart icon tab separates the icon from its item count.
 * Improved: the backdrop setting is hidden when the corner notice is selected, since only the centred dialog draws one.
@@ -200,6 +220,18 @@ Yes. Filters are available for the icon markup (`snapcart_icon_html`), its link 
 * Initial release: cart icon shortcode with a live count, and the add-to-cart popup.
 
 == Upgrade Notice ==
+
+= 2.0.11 =
+A small settings screen fix. Nothing on your store changes.
+
+= 2.0.10 =
+Adds an optional text label beside the cart icon. The icon's default color changes from white to black; if you had set a color yourself it is untouched.
+
+= 2.0.9 =
+A settings screen refinement. Nothing on your store changes.
+
+= 2.0.8 =
+Adds a live cart icon preview to the settings screen. Nothing on your store changes.
 
 = 2.0.7 =
 Settings are grouped more sensibly. Nothing you have configured is lost.

@@ -59,6 +59,7 @@ clear route onward to the cart and one back to browsing.
 | Area | What you control |
 | --- | --- |
 | Icon | Five shapes (bag, trolley, basket, tote, handbag), size, color |
+| Label | Optional wording beside the icon, on either side, inheriting the icon color |
 | Count badge | Position, background, number and border colors, border opacity, hide when empty |
 | Destination | Cart page or straight to checkout |
 | Confirmation | Centred dialog or corner notice, headline, supporting line, both button labels, auto-close timing, which parts appear, popup and backdrop colors, corner radii, button colors |
@@ -132,10 +133,11 @@ Paste the shortcode into any HTML, shortcode or widget element:
 [snapcart_icon]
 ```
 
-With wording beside the icon:
+Overriding the site-wide Label setting for one placement:
 
 ```text
-[snapcart_icon label="Cart"]
+[snapcart_icon label="Basket"]
+[snapcart_icon show_label="no"]
 ```
 
 ### In a template
@@ -186,6 +188,7 @@ means a stale session can never serve a stale price.
 | --- | --- |
 | `snapcart_icon_html` | The rendered cart icon markup |
 | `snapcart_icon_url` | Where the icon links |
+| `snapcart_icon_label` | The wording shown beside the icon |
 | `snapcart_popup_payload` | The confirmation payload before it is sent |
 | `snapcart_product_price` | The plain text price shown for a product |
 | `snapcart_recommendation_items` | The suggestion cards |

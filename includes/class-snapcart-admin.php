@@ -198,10 +198,18 @@ final class SnapCart_Admin {
 			true
 		);
 
-		wp_localize_script(
+		// The icon paths come from the same source the front end renders from,
+		// so the preview cannot drift from what a shopper actually sees.
+		wp_add_inline_script(
 			'snapcart-admin',
-			'SnapCartAdmin',
-			array( 'copied' => __( 'Copied', 'snapcart-for-woocommerce' ) )
+			'window.SnapCartAdmin = ' . wp_json_encode(
+				array(
+					'copied'       => __( 'Copied', 'snapcart-for-woocommerce' ),
+					'icons'        => SnapCart_Icons::paths(),
+					'defaultLabel' => __( 'Cart', 'snapcart-for-woocommerce' ),
+				)
+			) . ';',
+			'before'
 		);
 	}
 
@@ -243,6 +251,12 @@ final class SnapCart_Admin {
 		$this->add_field( 'icon_size', __( 'Size', 'snapcart-for-woocommerce' ), 'icon_glyph', 'field_icon_size' );
 		$this->add_field( 'icon_color', __( 'Color', 'snapcart-for-woocommerce' ), 'icon_glyph', 'field_icon_color' );
 		$this->add_field( 'link_target', __( 'Links To', 'snapcart-for-woocommerce' ), 'icon_glyph', 'field_link_target' );
+
+		$this->add_group( 'icon_label', 'icon', __( 'Label', 'snapcart-for-woocommerce' ) );
+
+		$this->add_field( 'enable_label', __( 'Label', 'snapcart-for-woocommerce' ), 'icon_label', 'field_enable_label' );
+		$this->add_field( 'label_text', __( 'Wording', 'snapcart-for-woocommerce' ), 'icon_label', 'field_label_text', 'snapcart-row-label' );
+		$this->add_field( 'label_position', __( 'Position', 'snapcart-for-woocommerce' ), 'icon_label', 'field_label_position', 'snapcart-row-label' );
 
 		$this->add_group( 'icon_count', 'icon', __( 'Item Count', 'snapcart-for-woocommerce' ) );
 
@@ -482,7 +496,9 @@ final class SnapCart_Admin {
 	 */
 	private function field_label( $key ) {
 		$labels = array(
-			'icon_style'    => __( 'Icon Shape', 'snapcart-for-woocommerce' ),
+			'icon_style'     => __( 'Icon Shape', 'snapcart-for-woocommerce' ),
+			'badge_position' => __( 'Item Count Position', 'snapcart-for-woocommerce' ),
+			'label_position' => __( 'Label Position', 'snapcart-for-woocommerce' ),
 			'popup_style'   => __( 'Confirmation Layout', 'snapcart-for-woocommerce' ),
 			'popup_radius'  => __( 'Popup Corners', 'snapcart-for-woocommerce' ),
 			'button_radius' => __( 'Button Corners', 'snapcart-for-woocommerce' ),
@@ -643,17 +659,103 @@ final class SnapCart_Admin {
 	}
 
 	/**
+	 * Whether wording appears beside the icon.
+	 *
+	 * @return void
+	 */
+	public function field_enable_label() {
+		$this->toggle(
+			'enable_label',
+			__( 'Show label beside the cart icon', 'snapcart-for-woocommerce' ),
+			__( 'The label takes the same color as the icon, so the two always match.', 'snapcart-for-woocommerce' ),
+			'snapcart-enable-label'
+		);
+	}
+
+	/**
+	 * The wording itself.
+	 *
+	 * @return void
+	 */
+	public function field_label_text() {
+		$this->text_input(
+			'label_text',
+			__( 'Cart', 'snapcart-for-woocommerce' ),
+			__( 'Leave blank to use "Cart". A shortcode or block can override this in one place without changing it everywhere.', 'snapcart-for-woocommerce' )
+		);
+	}
+
+	/**
+	 * Which side of the icon the wording sits on.
+	 *
+	 * @return void
+	 */
+	public function field_label_position() {
+		$this->radio_cards(
+			'label_position',
+			array(
+				'left'  => array(
+					'label'   => __( 'Left', 'snapcart-for-woocommerce' ),
+					'preview' => $this->label_preview( 'left' ),
+				),
+				'right' => array(
+					'label'   => __( 'Right', 'snapcart-for-woocommerce' ),
+					'preview' => $this->label_preview( 'right' ),
+				),
+			)
+		);
+	}
+
+	/**
+	 * A miniature of the icon with the wording on the given side.
+	 *
+	 * @param string $position left or right.
+	 * @return string
+	 */
+	private function label_preview( $position ) {
+		return sprintf(
+			'<span class="snapcart-label-preview snapcart-label-preview--%1$s">%2$s<span class="snapcart-label-preview__text">%3$s</span></span>',
+			esc_attr( $position ),
+			SnapCart_Icons::svg( SnapCart_Options::get( 'icon_style' ), 20, 'snapcart-label-preview__icon' ),
+			esc_html( SnapCart_Options::text( 'label_text', __( 'Cart', 'snapcart-for-woocommerce' ) ) )
+		);
+	}
+
+	/**
 	 * Count badge position.
 	 *
 	 * @return void
 	 */
 	public function field_badge_position() {
-		$this->select(
+		$this->radio_cards(
 			'badge_position',
 			array(
-				'right' => __( 'Top right of the icon', 'snapcart-for-woocommerce' ),
-				'left'  => __( 'Top left of the icon', 'snapcart-for-woocommerce' ),
+				'left'  => array(
+					'label'   => __( 'Top Left', 'snapcart-for-woocommerce' ),
+					'preview' => $this->badge_preview( 'left' ),
+				),
+				'right' => array(
+					'label'   => __( 'Top Right', 'snapcart-for-woocommerce' ),
+					'preview' => $this->badge_preview( 'right' ),
+				),
 			)
+		);
+	}
+
+	/**
+	 * A miniature of the cart icon with the count in the given corner.
+	 *
+	 * Drawn with the shop's own icon so the choice is shown against what is
+	 * actually in their header, not a generic placeholder.
+	 *
+	 * @param string $position left or right.
+	 * @return string
+	 */
+	private function badge_preview( $position ) {
+		return sprintf(
+			'<span class="snapcart-badge-preview snapcart-badge-preview--%1$s">%2$s<span class="snapcart-badge-preview__count">2</span></span>',
+			esc_attr( $position ),
+			SnapCart_Icons::svg( SnapCart_Options::get( 'icon_style' ), 24, 'snapcart-badge-preview__icon' )
 		);
 	}
 
@@ -693,8 +795,8 @@ final class SnapCart_Admin {
 	 * @return void
 	 */
 	public function field_icon_color() {
-		$this->color_input( 'icon_color', '#ffffff' );
-		$this->description( __( 'White suits a dark header. Clear this field to inherit your header text color instead, which is the safer choice if your header is light or changes color on scroll.', 'snapcart-for-woocommerce' ) );
+		$this->color_input( 'icon_color', '#000000' );
+		$this->description( __( 'Applies to the icon and to any wording beside it, so the two always match. Black suits the light headers most themes ship with; clear this field to inherit your header text color instead, which is the safer choice if your header is dark or changes color on scroll.', 'snapcart-for-woocommerce' ) );
 	}
 
 	/**
@@ -1133,7 +1235,16 @@ final class SnapCart_Admin {
 			</p>
 			<hr class="wp-header-end" />
 
-			<?php settings_errors(); ?>
+			<?php
+			/*
+			 * Notices stay early in the document so assistive technology meets
+			 * them in a sensible reading order; the settings script moves them
+			 * visually into the corner and auto-dismisses confirmations.
+			 */
+			?>
+			<div class="snapcart-toasts" id="snapcart-toasts">
+				<?php settings_errors(); ?>
+			</div>
 
 			<div class="snapcart-admin__grid">
 				<div class="snapcart-admin__main">
@@ -1148,6 +1259,7 @@ final class SnapCart_Admin {
 				</div>
 
 				<div class="snapcart-admin__side">
+					<?php $this->render_preview_card(); ?>
 					<?php $this->render_setup_card(); ?>
 					<?php $this->render_notes_card(); ?>
 				</div>
@@ -1243,6 +1355,46 @@ final class SnapCart_Admin {
 	}
 
 	/**
+	 * Live preview of the cart icon.
+	 *
+	 * Rendered server-side first so it is correct before any script runs, then
+	 * kept in step by the settings script as fields change. Shown on both a
+	 * light and a dark panel, because the commonest mistake is choosing a white
+	 * icon and only discovering later that the header is light.
+	 *
+	 * @return void
+	 */
+	private function render_preview_card() {
+		$style = SnapCart_Icons::normalize( SnapCart_Options::get( 'icon_style' ) );
+		$size  = (int) SnapCart_Options::get( 'icon_size' );
+		?>
+		<div class="snapcart-card">
+			<h2 class="snapcart-card__title"><?php esc_html_e( 'Preview', 'snapcart-for-woocommerce' ); ?></h2>
+
+			<div class="snapcart-preview-stage" id="snapcart-preview"
+				data-icon-size="<?php echo esc_attr( (string) $size ); ?>"
+				data-icon-style="<?php echo esc_attr( $style ); ?>">
+				<?php foreach ( array( 'light', 'dark' ) as $scheme ) : ?>
+					<div class="snapcart-preview-stage__pane snapcart-preview-stage__pane--<?php echo esc_attr( $scheme ); ?>">
+						<span class="snapcart-preview-icon snapcart-preview-icon--<?php echo esc_attr( SnapCart_Options::get( 'badge_position' ) ); ?><?php echo 'left' === SnapCart_Options::get( 'label_position' ) ? ' snapcart-preview-icon--label-left' : ''; ?>">
+							<span class="snapcart-preview-icon__glyph">
+								<?php echo SnapCart_Icons::svg( $style, $size, 'snapcart-preview-icon__svg' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG from the icon set. ?>
+								<span class="snapcart-preview-icon__count">2</span>
+							</span>
+							<span class="snapcart-preview-icon__label"<?php echo SnapCart_Options::is_on( 'enable_label' ) ? '' : ' hidden'; ?>><?php echo esc_html( SnapCart_Options::text( 'label_text', __( 'Cart', 'snapcart-for-woocommerce' ) ) ); ?></span>
+						</span>
+					</div>
+				<?php endforeach; ?>
+			</div>
+
+			<p class="description">
+				<?php esc_html_e( 'Your cart icon on a light and a dark header. Updates as you change the settings; save to apply it to your store.', 'snapcart-for-woocommerce' ); ?>
+			</p>
+		</div>
+		<?php
+	}
+
+	/**
 	 * "Add the icon" sidebar card.
 	 *
 	 * @return void
@@ -1266,9 +1418,10 @@ final class SnapCart_Admin {
 			<p class="description">
 				<?php
 				printf(
-					/* translators: %s: shortcode example including a label attribute. */
-					esc_html__( 'To show wording beside the icon, use %s.', 'snapcart-for-woocommerce' ),
-					'<code>[snapcart_icon label="Cart"]</code>'
+					/* translators: 1: shortcode with a label attribute, 2: shortcode with a show_label attribute. */
+					esc_html__( 'To override the Label settings for one placement, use %1$s. To hide the label somewhere it is otherwise on, use %2$s.', 'snapcart-for-woocommerce' ),
+					'<code>[snapcart_icon label="Basket"]</code>',
+					'<code>[snapcart_icon show_label="no"]</code>'
 				);
 				?>
 			</p>
@@ -1283,16 +1436,27 @@ final class SnapCart_Admin {
 	 */
 	private function render_notes_card() {
 		$notes = array(
-			__( 'The count updates the moment a shopper adds something on a shop or category page, with no page reload.', 'snapcart-for-woocommerce' ),
+			__( 'The count keeps itself right whenever the cart changes — adding on a shop page, removing a line on the cart page, or editing a quantity. No reload needed, and it still works if your theme has cart fragments switched off.', 'snapcart-for-woocommerce' ),
 			__( 'On a single product page most themes reload the page. The confirmation appears straight after the reload.', 'snapcart-for-woocommerce' ),
-			__( 'If your store is set to redirect to the cart after adding an item, the confirmation is skipped on purpose — the shopper is already looking at their cart.', 'snapcart-for-woocommerce' ),
+			__( 'The preview above shows your icon on a light and a dark header. If your header changes colour on scroll, clear the icon colour and it will follow the header instead.', 'snapcart-for-woocommerce' ),
+			__( 'A shortcode or block can carry its own wording, which overrides the Label settings for that one placement without changing the rest of your site.', 'snapcart-for-woocommerce' ),
+			__( 'Product suggestions are off until you turn them on. While they are off SnapCart runs no product queries at all.', 'snapcart-for-woocommerce' ),
 			__( 'Nothing is added to your pages until it is needed, and no data ever leaves your server.', 'snapcart-for-woocommerce' ),
 		);
 
+		// Two store settings quietly stop SnapCart doing its job, so they are
+		// called out here rather than leaving the shop owner to wonder why.
 		if ( 'yes' === get_option( 'woocommerce_cart_redirect_after_add' ) ) {
 			array_unshift(
 				$notes,
 				__( 'Heads up: your store currently redirects to the cart after every add, so the confirmation will not appear. Turn that off under WooCommerce → Settings → Products to use it.', 'snapcart-for-woocommerce' )
+			);
+		}
+
+		if ( 'yes' !== get_option( 'woocommerce_enable_ajax_add_to_cart' ) ) {
+			array_unshift(
+				$notes,
+				__( 'Heads up: AJAX add to cart is off on your store, so shop and category pages reload when a shopper adds something. SnapCart still works, but the confirmation feels faster with it on — see WooCommerce → Settings → Products.', 'snapcart-for-woocommerce' )
 			);
 		}
 		?>

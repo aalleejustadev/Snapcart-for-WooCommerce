@@ -140,8 +140,11 @@ final class SnapCart_Frontend {
 	 * @return string
 	 */
 	public function render_block( $attributes ) {
-		$label  = isset( $attributes['label'] ) ? (string) $attributes['label'] : '';
-		$markup = $this->render_icon( array( 'label' => $label ) );
+		// Blank wording means "follow the site-wide label setting", which is the
+		// same rule the shortcode uses.
+		$markup = $this->render_icon(
+			array( 'label' => isset( $attributes['label'] ) ? (string) $attributes['label'] : '' )
+		);
 
 		if ( '' === $markup ) {
 			return '';
@@ -167,14 +170,18 @@ final class SnapCart_Frontend {
 
 		$atts = shortcode_atts(
 			array(
-				'label' => '',
+				// Wording override. Supplying one implies the label is wanted,
+				// so a shortcode keeps working whatever the site-wide toggle says.
+				'label'      => '',
+				// Explicit yes/no override for that toggle.
+				'show_label' => '',
 			),
 			(array) $atts,
 			'snapcart_icon'
 		);
 
 		$count = $this->get_cart_count();
-		$label = trim( (string) $atts['label'] );
+		$label = $this->resolve_label( $atts );
 
 		$aria_text = sprintf(
 			/* translators: %d: number of items currently in the cart. */
@@ -187,6 +194,10 @@ final class SnapCart_Frontend {
 			'snapcart-icon--badge-' . SnapCart_Options::get( 'badge_position' ),
 		);
 
+		if ( '' !== $label ) {
+			$classes[] = 'snapcart-icon--label-' . SnapCart_Options::get( 'label_position' );
+		}
+
 		$markup = sprintf(
 			'<a class="%1$s" href="%2$s" rel="nofollow" aria-label="%3$s">',
 			esc_attr( implode( ' ', $classes ) ),
@@ -194,13 +205,14 @@ final class SnapCart_Frontend {
 			esc_attr( $aria_text )
 		);
 
-		$markup .= '<span class="snapcart-icon__glyph">' . $this->get_icon_svg() . '</span>';
+		// The count sits inside the glyph rather than the link, so it stays
+		// pinned to the icon instead of drifting to the far side of the label.
+		$markup .= '<span class="snapcart-icon__glyph">' . $this->get_icon_svg() . $this->get_count_html( $count ) . '</span>';
 
 		if ( '' !== $label ) {
 			$markup .= '<span class="snapcart-icon__label">' . esc_html( $label ) . '</span>';
 		}
 
-		$markup .= $this->get_count_html( $count );
 		$markup .= '</a>';
 
 		/**
@@ -212,6 +224,44 @@ final class SnapCart_Frontend {
 		 * @param int    $count  Current cart item count.
 		 */
 		return apply_filters( 'snapcart_icon_html', $markup, $count );
+	}
+
+	/**
+	 * Work out the wording to show beside the icon, or an empty string for none.
+	 *
+	 * Shortcode and block attributes win over the site-wide setting, so a single
+	 * placement can differ from the rest of the site without changing it there.
+	 *
+	 * @param array $atts Resolved shortcode attributes.
+	 * @return string
+	 */
+	private function resolve_label( array $atts ) {
+		$override = trim( (string) $atts['label'] );
+		$toggle   = strtolower( trim( (string) $atts['show_label'] ) );
+
+		if ( '' !== $toggle ) {
+			$show = in_array( $toggle, array( 'yes', 'true', '1', 'on' ), true );
+		} else {
+			// Supplying wording is itself a request to show it.
+			$show = '' !== $override || SnapCart_Options::is_on( 'enable_label' );
+		}
+
+		if ( ! $show ) {
+			return '';
+		}
+
+		$text = '' !== $override
+			? $override
+			: SnapCart_Options::text( 'label_text', __( 'Cart', 'snapcart-for-woocommerce' ) );
+
+		/**
+		 * Filter the wording shown beside the cart icon.
+		 *
+		 * @since 2.0.10
+		 *
+		 * @param string $text Label text; an empty string hides the label.
+		 */
+		return (string) apply_filters( 'snapcart_icon_label', $text );
 	}
 
 	/**

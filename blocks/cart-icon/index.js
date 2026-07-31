@@ -69,7 +69,7 @@
 							__nextHasNoMarginBottom: true,
 							label: __( 'Text Label', 'snapcart-for-woocommerce' ),
 							help: __(
-								'Optional wording shown beside the icon, such as "Cart". Leave blank for icon only.',
+								'Overrides the site-wide Label setting for this block only. Leave blank to follow that setting.',
 								'snapcart-for-woocommerce'
 							),
 							value: label,
