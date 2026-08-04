@@ -38,8 +38,8 @@ fonts or stock photography used in the banner.
 2. Wait for the review email. Approval grants you SVN access.
 3. `svn checkout https://plugins.svn.wordpress.org/snapcart-for-woocommerce`
 4. Copy the plugin files into `trunk/` and these images into `assets/`.
-5. `svn copy trunk tags/2.0.0` — the tag must match `Stable tag` in `readme.txt`.
-6. `svn commit -m "Release 2.0.0"`
+5. `svn copy trunk tags/2.0.11` — the tag must match `Stable tag` in `readme.txt`.
+6. `svn commit -m "Release 2.0.11"`
 
 Releases are driven by `Stable tag`, so a release only goes live once that
 value points at a directory that exists under `tags/`.

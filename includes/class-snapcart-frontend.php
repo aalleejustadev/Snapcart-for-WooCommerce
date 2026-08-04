@@ -895,11 +895,16 @@ final class SnapCart_Frontend {
 	/**
 	 * Tell page caches to skip this response.
 	 *
+	 * `DONOTCACHEPAGE` is deliberately unprefixed. It is the shared constant that
+	 * WP Rocket, W3 Total Cache, WP Super Cache and Batcache all look for, so a
+	 * prefixed name would be read by nothing and a cached page could then serve
+	 * one shopper's confirmation to somebody else.
+	 *
 	 * @return void
 	 */
 	private function prevent_page_cache() {
 		if ( ! defined( 'DONOTCACHEPAGE' ) ) {
-			define( 'DONOTCACHEPAGE', true );
+			define( 'DONOTCACHEPAGE', true ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- De-facto standard constant read by page caching plugins; see the note above.
 		}
 		if ( function_exists( 'nocache_headers' ) && ! headers_sent() ) {
 			nocache_headers();

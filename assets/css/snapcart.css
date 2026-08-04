@@ -29,31 +29,66 @@
 /* -----------------------------------------------------------------------------
  * Cart icon and live count
  * -------------------------------------------------------------------------- */
-/* The icon colour falls back to the surrounding header when the shop owner
- * clears the setting, so it stays legible on light and dark themes alike. */
+/* The icon is the one part of SnapCart that renders inside the theme's own
+ * markup — a header, a nav, a widget area. Theme rules such as
+ * `.site-header a`, `.main-navigation li a` or `.menu-item a` therefore match
+ * it directly, and a single class loses to them on specificity. Every selector
+ * in this section repeats `.snapcart-icon` to sit above those rules, and the
+ * base rule re-states the properties themes routinely set on header links
+ * (padding, borders, backgrounds, letter-spacing, decorative pseudo-elements)
+ * so the icon renders the same whatever it is dropped into.
+ *
+ * Font family and weight are deliberately left inherited: the label is meant to
+ * sit in the header as though the theme drew it. Colour behaves the same way,
+ * falling back to the surrounding header when the shop owner clears the
+ * setting, so it stays legible on light and dark themes alike. */
 .wp-block-snapcart-cart-icon {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
 }
-.snapcart-icon {
+
+.snapcart-icon.snapcart-icon {
   position: relative;
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  width: auto;
+  height: auto;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  text-shadow: none;
+  text-transform: none;
+  letter-spacing: normal;
+  word-spacing: normal;
+  font-style: normal;
   line-height: 1;
   color: var(--snapcart-icon-color, inherit);
   text-decoration: none;
   transition: opacity 0.15s ease;
 }
 
-.snapcart-icon:hover,
-.snapcart-icon:focus {
+/* Themes commonly hang underline sweeps and dropdown carets off header links
+ * this way. Neither belongs on a cart glyph. */
+.snapcart-icon.snapcart-icon::before,
+.snapcart-icon.snapcart-icon::after {
+  content: none;
+}
+
+.snapcart-icon.snapcart-icon:hover,
+.snapcart-icon.snapcart-icon:focus {
   color: var(--snapcart-icon-color, inherit);
+  background: none;
+  text-decoration: none;
   opacity: 0.75;
 }
 
-.snapcart-icon:focus-visible {
+.snapcart-icon.snapcart-icon:focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 4px;
   border-radius: 4px;
@@ -61,39 +96,70 @@
 
 /* The count is positioned against the glyph, not the link, so it stays pinned
  * to the icon rather than drifting past any wording beside it. */
-.snapcart-icon__glyph {
+.snapcart-icon.snapcart-icon .snapcart-icon__glyph {
   position: relative;
   display: inline-flex;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
 }
 
-.snapcart-icon__svg {
+/* Size is deliberately not stated here. The glyph carries width and height
+ * attributes written by PHP from the Size setting, and `width: auto` on an
+ * inline SVG resolves to 100% rather than to those attributes — which would
+ * stretch the icon to the width of the header. `max-width` is safe to state
+ * because it constrains without setting a size, and it answers the
+ * `svg { max-width: 100% }` themes ship. */
+.snapcart-icon.snapcart-icon .snapcart-icon__svg {
   display: block;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+  vertical-align: baseline;
 }
 
-.snapcart-icon__label {
+.snapcart-icon.snapcart-icon .snapcart-icon__label {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
   font-size: 0.95em;
   white-space: nowrap;
 }
 
 /* Reordered rather than reversed in the markup, so the icon still comes first
  * in the document for anything reading it in source order. */
-.snapcart-icon--label-left .snapcart-icon__label {
+.snapcart-icon.snapcart-icon--label-left .snapcart-icon__label {
   order: -1;
 }
 
-.snapcart-count {
+.snapcart-icon.snapcart-icon .snapcart-count {
   position: absolute;
   inset-block-start: -8px;
   min-width: 18px;
+  width: auto;
   height: 18px;
+  max-width: none;
   padding: 0 5px;
+  margin: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
+  font-family: inherit;
   font-size: 11px;
   font-weight: 700;
+  font-style: normal;
   font-variant-numeric: tabular-nums;
+  text-transform: none;
+  letter-spacing: normal;
+  text-shadow: none;
+  box-shadow: none;
   line-height: 1;
   border-radius: 999px;
   background: var(--snapcart-badge-bg);
@@ -105,20 +171,86 @@
   pointer-events: none;
 }
 
-.snapcart-icon--badge-right .snapcart-count {
+.snapcart-icon.snapcart-icon--badge-right .snapcart-count {
   inset-inline-end: -10px;
 }
 
-.snapcart-icon--badge-left .snapcart-count {
+.snapcart-icon.snapcart-icon--badge-left .snapcart-count {
   inset-inline-start: -10px;
 }
 
-.snapcart-count--empty {
+/* These two modifiers have to match the specificity the base rule was raised
+ * to, or the base would keep winning and the badge would never hide or bump. */
+.snapcart-icon.snapcart-icon .snapcart-count--empty {
   display: none;
 }
 
-.snapcart-count--bump {
+.snapcart-icon.snapcart-icon .snapcart-count--bump {
   transform: scale(1.35);
+}
+
+/* -----------------------------------------------------------------------------
+ * Confirmation popup — theme armour
+ * -------------------------------------------------------------------------- */
+/* The confirmation is built from plain h2/p/a/button/img/span elements, and
+ * themes style those tags globally. Anything SnapCart does not state for itself
+ * is inherited from the theme, which is how one set of settings ends up looking
+ * different from site to site. This block states them once, for every tag the
+ * popup renders.
+ *
+ * Two details make it safe:
+ *
+ * 1. The popup is appended to <body>, outside every theme content wrapper, so
+ *    content-scoped selectors (`.entry-content p`, `.woocommerce .button`,
+ *    `#main button`) cannot reach it. What does reach it is bare tag selectors
+ *    (`button {}`, `h2 {}`, `body a {}`), and those top out at 0-0-2.
+ * 2. `:where()` contributes nothing to specificity, so this rule weighs exactly
+ *    0-1-0 — above every one of those theme rules, and level with SnapCart's
+ *    own single-class rules below. Level means source order decides, and this
+ *    block comes first, so the component styles that follow always win. Never
+ *    move it below them.
+ *
+ * `outline` is deliberately absent: resetting it here would outrank the
+ * :focus-visible rules further down and strip the keyboard focus rings. So is
+ * `display`, which cannot be reset generically without flattening the layout.
+ * `svg` is left out of the tag list because every SVG in the popup is already
+ * sized by its own rule, and `width: auto` on an inline SVG means 100%, not
+ * "use the width attribute". */
+.snapcart-popup :where(div, span, p, h2, a, button, img) {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  text-shadow: none;
+  text-transform: none;
+  letter-spacing: normal;
+  word-spacing: normal;
+  font-family: inherit;
+  font-style: normal;
+  font-variant: normal;
+  text-align: start;
+  text-indent: 0;
+  text-decoration: none;
+  float: none;
+  position: static;
+  width: auto;
+  height: auto;
+  min-width: 0;
+  min-height: 0;
+  max-width: none;
+  max-height: none;
+  transform: none;
+  animation: none;
+  vertical-align: baseline;
+  list-style: none;
+}
+
+.snapcart-popup :where(div, span, p, h2, a, button, img)::before,
+.snapcart-popup :where(div, span, p, h2, a, button, img)::after {
+  content: none;
 }
 
 /* -----------------------------------------------------------------------------
@@ -136,11 +268,22 @@
   box-shadow: var(--snapcart-shadow);
   padding: 24px 22px 20px;
   text-align: start;
+  /* Inherited on purpose: the confirmation should read in the store's own
+	   typeface. Everything else that inherits is neutralised below, because a
+	   body-level letter-spacing or uppercase transform is decoration meant for
+	   the theme's own layout, not for a dialog. */
   font-family: inherit;
   /* An explicit base so the em sizes below are immune to themes that shrink
 	   the root font size (html { font-size: 62.5% } and friends). */
   font-size: 16px;
+  font-weight: 400;
+  font-style: normal;
   line-height: 1.5;
+  letter-spacing: normal;
+  word-spacing: normal;
+  text-transform: none;
+  text-indent: 0;
+  text-shadow: none;
 }
 
 .snapcart-popup *,
@@ -234,9 +377,15 @@
   border-radius: var(--snapcart-inner-radius);
 }
 
+/* The only `!important` in the stylesheet, and it is load-bearing. Themes and
+ * image-optimisation plugins very commonly ship `img { height: auto !important }`
+ * to stop layout shift. An `!important` declaration can only be answered by
+ * another one, and without this the square product thumbnail collapses to its
+ * natural aspect ratio and the whole row reflows. Scoped to the two thumbnails
+ * so nothing else in the popup is made unoverridable. */
 .snapcart-popup__thumb {
-  width: 54px;
-  height: 54px;
+  width: 54px !important;
+  height: 54px !important;
   flex: 0 0 auto;
   object-fit: cover;
   border-radius: var(--snapcart-inner-radius);
@@ -458,19 +607,23 @@
     height: 36px;
   }
 
+  /* `!important` is carried through from the base rules above: an important
+   * declaration can only be overridden by another one, so dropping it here
+   * would leave the phone sizes losing to the desktop ones. */
   .snapcart-popup__thumb {
-    width: 48px;
-    height: 48px;
+    width: 48px !important;
+    height: 48px !important;
   }
 
-  .snapcart-rec__card,
-  .snapcart-rec__thumb {
+  .snapcart-rec__card {
     flex-basis: 116px;
     width: 116px;
   }
 
   .snapcart-rec__thumb {
-    height: 116px;
+    flex-basis: 116px;
+    width: 116px !important;
+    height: 116px !important;
   }
 }
 
@@ -615,9 +768,10 @@
   border-radius: var(--snapcart-inner-radius);
 }
 
+/* Same reasoning as .snapcart-popup__thumb above. */
 .snapcart-rec__thumb {
-  width: 132px;
-  height: 132px;
+  width: 132px !important;
+  height: 132px !important;
   object-fit: cover;
   border-radius: var(--snapcart-inner-radius);
   background: #f3f4f6;
@@ -643,6 +797,14 @@
   color: var(--snapcart-text);
 }
 
+/* A theme's `a:hover { color: … }` weighs 0-1-1 and would otherwise outrank the
+ * card's own 0-1-0 colour, recolouring the suggestion on hover. */
+.snapcart-rec__card:hover,
+.snapcart-rec__card:focus {
+  color: var(--snapcart-text);
+  background: none;
+}
+
 .snapcart-rec__card:hover .snapcart-rec__name {
   text-decoration: underline;
 }
@@ -650,16 +812,20 @@
 /* -----------------------------------------------------------------------------
  * Motion and contrast preferences
  * -------------------------------------------------------------------------- */
+/* The count selectors are written at the same weight the cart icon section was
+ * raised to. At a plain `.snapcart-count` these would sit below the base rule
+ * and silently stop working — motion would still play for people who asked for
+ * none, and the badge would lose its high-contrast border. */
 @media (prefers-reduced-motion: reduce) {
   .snapcart-overlay,
   .snapcart-overlay .snapcart-popup,
   .snapcart-toast,
-  .snapcart-count,
+  .snapcart-icon.snapcart-icon .snapcart-count,
   .snapcart-btn {
     transition-duration: 0.01ms;
   }
 
-  .snapcart-count--bump {
+  .snapcart-icon.snapcart-icon .snapcart-count--bump {
     transform: none;
   }
 }
@@ -669,7 +835,7 @@
     border: 1px solid CanvasText;
   }
 
-  .snapcart-count {
+  .snapcart-icon.snapcart-icon .snapcart-count {
     border: 1px solid CanvasText;
   }
 }

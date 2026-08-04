@@ -1,11 +1,11 @@
 === SnapCart for WooCommerce ===
-Contributors: alimurtaza
+Contributors: iamalimurtazaa
 Tags: woocommerce, cart, add to cart, mini cart, cart icon
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
 Requires Plugins: woocommerce
-Stable tag: 2.0.11
+Stable tag: 2.0.12
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -43,7 +43,7 @@ SnapCart is deliberately small. There is no page builder, no dashboard, no accou
 
 = Built to stay out of the way =
 
-* **Light.** About 8 KB of CSS and 12 KB of JavaScript, minified, loaded from your own server. No frameworks, no font downloads, no external requests of any kind.
+* **Light.** About 12 KB of CSS and 14 KB of JavaScript, minified, loaded from your own server. No frameworks, no font downloads, no external requests of any kind.
 * **Fast.** Suggested product IDs are cached, and the cache is cleared automatically when you edit a product. Turn suggestions off and no product data is queried at all.
 * **Correct prices, always.** Prices are read fresh on every request rather than cached, so multi-currency, tax-by-country and role-based pricing plugins all display the right figure.
 * **Cache friendly.** Pages that carry a confirmation are marked as uncacheable, so a full-page cache can never serve one shopper's confirmation to somebody else.
@@ -66,6 +66,18 @@ Classic themes and header builders: use the shortcode.
 = Privacy =
 
 SnapCart does not collect, store or transmit any personal data. It makes no external requests, sets no cookies of its own, and adds no tracking. It reads WooCommerce's existing cart session purely to know which product was just added.
+
+= Source code =
+
+Every file SnapCart ships is human readable. The minified stylesheet and script are built from `assets/css/snapcart.css` and `assets/js/snapcart.js`, both of which are included in the plugin and are what load when `SCRIPT_DEBUG` is on.
+
+Development happens in the open, and the build script that produces the minified files lives with the source:
+
+https://github.com/aalleejustadev/snapcart-for-woocommerce
+
+= Trademarks =
+
+WooCommerce is a trademark of Automattic Inc. SnapCart for WooCommerce is an independent extension and is not affiliated with, endorsed by, or sponsored by Automattic or the WooCommerce project.
 
 == Installation ==
 
@@ -133,6 +145,10 @@ Yes. Filters are available for the icon markup (`snapcart_icon_html`), its link 
 5. The settings screen under WooCommerce → SnapCart.
 
 == Changelog ==
+
+= 2.0.12 =
+* Fixed: themes could bleed their own styling into the confirmation and the cart icon — button padding and uppercase labels, underlines and carets on the icon, heading borders, and squashed product thumbnails on themes that force `img { height: auto }`. Both now render the same on any theme or child theme.
+* Fixed: the CSS build step could merge a descendant selector into a compound one, so a rule intended for elements inside the confirmation was applied to the confirmation itself.
 
 = 2.0.11 =
 * Fixed: the cart icon color picker still offered white as its "Default", so resetting it disagreed with the black a fresh install actually uses.
@@ -220,6 +236,9 @@ Yes. Filters are available for the icon markup (`snapcart_icon_html`), its link 
 * Initial release: cart icon shortcode with a live count, and the add-to-cart popup.
 
 == Upgrade Notice ==
+
+= 2.0.12 =
+The confirmation and cart icon now hold their own styling on themes that were overriding them. Your settings are unchanged.
 
 = 2.0.11 =
 A small settings screen fix. Nothing on your store changes.

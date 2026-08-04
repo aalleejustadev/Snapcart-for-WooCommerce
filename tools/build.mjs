@@ -19,6 +19,13 @@ const root = join( dirname( fileURLToPath( import.meta.url ) ), '..' );
 /**
  * Minify CSS: strip comments, collapse whitespace, tidy punctuation.
  *
+ * The colon is handled apart from the other punctuation, and only ever has
+ * whitespace removed *after* it. A space before a colon is not decoration — in
+ * `.card :where(p)` or `.card :hover` it is the descendant combinator, and
+ * eating it silently rewrites the rule to mean "the card itself" instead of
+ * "elements inside the card". Declarations are written `prop: value`, so
+ * trimming one side is all the minification that was ever being bought here.
+ *
  * @param {string} css Source CSS.
  * @return {string} Minified CSS.
  */
@@ -26,7 +33,8 @@ function minifyCss( css ) {
 	return css
 		.replace( /\/\*[\s\S]*?\*\//g, '' )
 		.replace( /\s+/g, ' ' )
-		.replace( /\s*([{}:;,>])\s*/g, '$1' )
+		.replace( /\s*([{};,>])\s*/g, '$1' )
+		.replace( /:\s+/g, ':' )
 		.replace( /;}/g, '}' )
 		.trim();
 }

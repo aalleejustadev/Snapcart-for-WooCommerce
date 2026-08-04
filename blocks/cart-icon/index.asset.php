@@ -16,5 +16,5 @@ return array(
 		'wp-element',
 		'wp-i18n',
 	),
-	'version'      => '2.0.11',
+	'version'      => '2.0.12',
 );
