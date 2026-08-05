@@ -3,7 +3,7 @@
  * Plugin Name:       SnapCart for WooCommerce
  * Plugin URI:        https://github.com/aalleejustadev/snapcart-for-woocommerce
  * Description:       A live cart icon for your header and a fast add-to-cart confirmation that keeps shoppers browsing, with optional product suggestions.
- * Version:           2.1.0
+ * Version:           2.1.1
  * Requires at least: 6.5
  * Requires PHP:      7.4
  * Requires Plugins:  woocommerce
@@ -40,7 +40,7 @@ defined( 'ABSPATH' ) || exit;
 |--------------------------------------------------------------------------
 */
 
-define( 'SNAPCART_VERSION', '2.1.0' );
+define( 'SNAPCART_VERSION', '2.1.1' );
 define( 'SNAPCART_FILE', __FILE__ );
 define( 'SNAPCART_PATH', plugin_dir_path( __FILE__ ) );
 define( 'SNAPCART_URL', plugin_dir_url( __FILE__ ) );

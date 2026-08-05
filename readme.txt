@@ -5,7 +5,7 @@ Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
 Requires Plugins: woocommerce
-Stable tag: 2.1.0
+Stable tag: 2.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -146,6 +146,10 @@ Yes. Filters are available for the icon markup (`snapcart_icon_html`), its link 
 
 == Changelog ==
 
+= 2.1.1 =
+* Fixed: a cart icon hover color could be ignored on themes that style header links on hover with an ID selector or their own `!important`. A hover color you have chosen is now enforced over the theme. Leaving it empty still hands hover back to your theme, exactly as before.
+* Improved: the settings preview now updates while you drag inside a color picker, rather than waiting until you release it.
+
 = 2.1.0 =
 * New: choose whether the cart icon is drawn outlined or filled. Both styles are shown as swatches using the shape you picked, so you compare the actual icon rather than a generic sample.
 * New: a hover color for the cart icon. Leave it empty and the icon fades slightly on hover exactly as before; set one and it switches to that color at full strength instead. The settings preview reacts to hover, so you can judge it on a light and a dark header before saving.
@@ -238,6 +242,9 @@ Yes. Filters are available for the icon markup (`snapcart_icon_html`), its link 
 * Initial release: cart icon shortcode with a live count, and the add-to-cart popup.
 
 == Upgrade Notice ==
+
+= 2.1.1 =
+Makes a chosen cart icon hover color stick on themes that were overriding it. Nothing changes if you have not set one.
 
 = 2.1.0 =
 Adds outlined or filled cart icons and a hover color. The confirmation and icon also now hold their own styling on themes that were overriding them. Your settings are unchanged, and the icon keeps the outlined style it has today.

@@ -733,7 +733,39 @@ final class SnapCart_Frontend {
 			$rules[] = $rule;
 		}
 
-		return ':root{' . implode( ';', $rules ) . '}';
+		return ':root{' . implode( ';', $rules ) . '}' . $this->get_hover_override();
+	}
+
+	/**
+	 * A hard override for the cart icon's hover color.
+	 *
+	 * The icon renders inside the theme's own header, where rules like
+	 * `#site-header a:hover` outrank anything SnapCart can reasonably write, and
+	 * a theme that marks its own hover color `!important` cannot be answered any
+	 * other way. A chosen hover color is an explicit instruction, so it is
+	 * enforced rather than offered.
+	 *
+	 * This is emitted only when a color has actually been picked. Applying it
+	 * unconditionally would turn the empty default into `color: inherit
+	 * !important`, which would override the theme's hover on every store that
+	 * cleared the icon color precisely so the header could drive it.
+	 *
+	 * @return string
+	 */
+	private function get_hover_override() {
+		// Re-sanitised on the way out rather than trusted from storage, because
+		// this value is interpolated straight into a style block and the
+		// settings array is filterable.
+		$hover = sanitize_hex_color( (string) SnapCart_Options::get( 'icon_hover_color' ) );
+
+		if ( ! is_string( $hover ) || '' === $hover ) {
+			return '';
+		}
+
+		return sprintf(
+			'.snapcart-icon.snapcart-icon:hover,.snapcart-icon.snapcart-icon:focus{color:%s !important;opacity:1 !important}',
+			$hover
+		);
 	}
 
 	/**

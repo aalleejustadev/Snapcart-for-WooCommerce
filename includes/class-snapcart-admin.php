@@ -845,7 +845,7 @@ final class SnapCart_Admin {
 		echo '</div>';
 
 		$this->description( __( 'Applies to the icon and to any wording beside it, so the two always match. Black suits the light headers most themes ship with; clear the default to inherit your header text color instead, which is the safer choice if your header is dark or changes color on scroll.', 'snapcart-for-woocommerce' ) );
-		$this->description( __( 'Leave Hover empty and the icon simply fades slightly on hover, as it always has. Set a color and it switches to that instead, at full strength.', 'snapcart-for-woocommerce' ) );
+		$this->description( __( 'Leave Hover empty and the icon simply fades slightly on hover, as it always has. Set a color and it switches to that instead, at full strength, overriding whatever your theme does to header links on hover.', 'snapcart-for-woocommerce' ) );
 	}
 
 	/**

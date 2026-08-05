@@ -306,12 +306,56 @@
 		);
 	}
 
-	// Covers typing, spinners, radio cards and the color picker's own events.
+	/**
+	 * Coalesce refreshes onto the next animation frame.
+	 *
+	 * Dragging inside a color picker can fire hundreds of events a second, and
+	 * every refresh rewrites custom properties and re-renders several SVGs.
+	 * Painting once per frame is the most the screen can show anyway.
+	 */
+	var previewFrame = null;
+
+	function schedulePreview() {
+		if ( previewFrame ) {
+			return;
+		}
+
+		previewFrame = window.requestAnimationFrame( function () {
+			previewFrame = null;
+			updatePreview();
+		} );
+	}
+
+	// Every control on the screen, not just the ones the preview reads today, so
+	// a setting added later is covered without anyone remembering to widen this.
 	$( document ).on(
 		'change input',
-		'[name^="snapcart_settings[icon_"], [name^="snapcart_settings[badge_"], [name^="snapcart_settings[label_"], #snapcart-enable-label',
-		updatePreview
+		'[name^="snapcart_settings["], #snapcart-enable-label',
+		schedulePreview
 	);
+
+	/*
+	 * Iris — the color picker WordPress ships — writes the new value straight to
+	 * the input while a swatch or slider is being dragged, without firing an
+	 * input or change event on it. Its own `change` callback is throttled and
+	 * lands late, so without this the preview only caught up once the mouse was
+	 * released. Watching pointer movement over the picker closes that gap and
+	 * makes dragging genuinely live.
+	 */
+	$( document ).on(
+		'pointerdown pointermove mousedown mousemove touchmove',
+		'.wp-picker-container',
+		schedulePreview
+	);
+
+	// A drag that began on a slider and ended outside the picker still needs one
+	// final read. Gated on a picker being open so an ordinary click anywhere on
+	// the screen does not schedule work for nothing.
+	$( document ).on( 'pointerup mouseup touchend', function () {
+		if ( document.querySelector( '.wp-picker-container.wp-picker-active' ) ) {
+			schedulePreview();
+		}
+	} );
 
 	/* ---------------------------------------------------------------------
 	 * Color pickers
@@ -329,10 +373,10 @@
 		// a value that is still one change behind.
 		fields.wpColorPicker( {
 			change: function () {
-				window.setTimeout( updatePreview, 0 );
+				window.setTimeout( schedulePreview, 0 );
 			},
 			clear: function () {
-				window.setTimeout( updatePreview, 0 );
+				window.setTimeout( schedulePreview, 0 );
 			},
 		} );
 	}
