@@ -49,8 +49,12 @@ final class SnapCart_Options {
 		return array(
 			// Cart icon. An empty color means "inherit from the theme".
 			'icon_style'             => 'bag',
+			'icon_fill'              => 'outline',
 			'icon_size'              => 24,
 			'icon_color'             => '#000000',
+			// Empty means "keep the resting color and dim it slightly", which is
+			// what SnapCart did before the setting existed.
+			'icon_hover_color'       => '',
 			'enable_label'           => 'no',
 			'label_text'             => '',
 			'label_position'         => 'right',
@@ -108,6 +112,7 @@ final class SnapCart_Options {
 	public static function choices() {
 		return array(
 			'icon_style'       => array( 'bag', 'cart', 'basket', 'tote', 'handbag' ),
+			'icon_fill'        => array( 'outline', 'filled' ),
 			'label_position'   => array( 'left', 'right' ),
 			'badge_position'   => array( 'right', 'left' ),
 			'link_target'      => array( 'cart', 'checkout' ),
@@ -163,6 +168,7 @@ final class SnapCart_Options {
 	private static function color_keys() {
 		return array(
 			'icon_color',
+			'icon_hover_color',
 			'badge_bg',
 			'badge_color',
 			'badge_border',

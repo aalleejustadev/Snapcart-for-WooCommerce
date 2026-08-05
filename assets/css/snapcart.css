@@ -80,12 +80,19 @@
   content: none;
 }
 
+/* With no hover color chosen this falls all the way back to the resting colour
+ * and dims it, which is what SnapCart has always done. Choosing one swaps the
+ * colour instead, and PHP sets the opacity variable to 1 alongside it so the
+ * icon is not dimmed and recoloured at the same time. */
 .snapcart-icon.snapcart-icon:hover,
 .snapcart-icon.snapcart-icon:focus {
-  color: var(--snapcart-icon-color, inherit);
+  color: var(
+    --snapcart-icon-hover-color,
+    var(--snapcart-icon-color, inherit)
+  );
   background: none;
   text-decoration: none;
-  opacity: 0.75;
+  opacity: var(--snapcart-icon-hover-opacity, 0.75);
 }
 
 .snapcart-icon.snapcart-icon:focus-visible {

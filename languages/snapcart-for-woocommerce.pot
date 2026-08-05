@@ -9,12 +9,12 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-04T14:12:22+00:00\n"
+"POT-Creation-Date: 2026-08-05T05:16:40+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Domain: snapcart-for-woocommerce\n"
 
-#: blocks/cart-icon/index.js:67 includes/class-snapcart-admin.php:244
+#: blocks/cart-icon/index.js:67 includes/class-snapcart-admin.php:249
 msgid "Cart Icon"
 msgstr ""
 
@@ -34,581 +34,613 @@ msgstr ""
 msgid "Open SnapCart settings"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1009
+#: includes/class-snapcart-admin.php:1007
+msgid "The border is always 1px and solid. Clear its color to remove it altogether."
+msgstr ""
+
+#: includes/class-snapcart-admin.php:1017
+msgid "Color"
+msgstr ""
+
+#: includes/class-snapcart-admin.php:1023
+msgid "Opacity"
+msgstr ""
+
+#: includes/class-snapcart-admin.php:1027
+msgid "The dimmed layer behind the centred dialog. A lower opacity keeps more of your page visible; a higher one puts more focus on the confirmation."
+msgstr ""
+
+#: includes/class-snapcart-admin.php:1039 includes/class-snapcart-admin.php:1056 includes/class-snapcart-admin.php:1073
+msgid "Sharp"
+msgstr ""
+
+#: includes/class-snapcart-admin.php:1040 includes/class-snapcart-admin.php:1057 includes/class-snapcart-admin.php:1074
+msgid "Soft"
+msgstr ""
+
+#: includes/class-snapcart-admin.php:1041
+msgid "Rounded"
+msgstr ""
+
+#: includes/class-snapcart-admin.php:1043
+msgid "Also applied to the product row, thumbnails and suggestion cards, so the whole confirmation stays consistent."
+msgstr ""
+
+#: includes/class-snapcart-admin.php:1058
 msgid "Pill"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1011
+#: includes/class-snapcart-admin.php:1060
 msgid "Applies to both buttons. Match whatever your theme does with its own buttons."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1026
+#: includes/class-snapcart-admin.php:1075
 msgid "Circle"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1028
+#: includes/class-snapcart-admin.php:1077
 msgid "Shape of the two arrows that scroll the strip. They appear for visitors with a mouse; on a touch screen the strip is swiped instead."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1067
-msgid "Applies to the main button. Clear the label color and SnapCart picks black or white for you, whichever reads better on the background you chose."
-msgstr ""
-
-#: includes/class-snapcart-admin.php:1080
-msgid "seconds"
-msgstr ""
-
-#: includes/class-snapcart-admin.php:1081
-msgid "Set to 0 to leave it on screen until the shopper closes it. The countdown pauses while they hover or use the confirmation."
-msgstr ""
-
-#: includes/class-snapcart-admin.php:1099
-msgid "Suggest more products inside the confirmation"
-msgstr ""
-
-#: includes/class-snapcart-admin.php:110 includes/class-snapcart-admin.php:111 includes/class-snapcart-admin.php:1230
+#: includes/class-snapcart-admin.php:110 includes/class-snapcart-admin.php:111 includes/class-snapcart-admin.php:1279
 msgid "SnapCart"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1113 includes/class-snapcart-recommendations.php:85
-msgid "Discover more"
-msgstr ""
-
-#: includes/class-snapcart-admin.php:1114
-msgid "Leave blank to use the default wording."
-msgstr ""
-
-#: includes/class-snapcart-admin.php:1127
-msgid "Related to what they just added"
-msgstr ""
-
-#: includes/class-snapcart-admin.php:1128
-msgid "Featured products"
+#: includes/class-snapcart-admin.php:1116
+msgid "Applies to the main button. Clear the label color and SnapCart picks black or white for you, whichever reads better on the background you chose."
 msgstr ""
 
 #: includes/class-snapcart-admin.php:1129
-msgid "Best sellers"
+msgid "seconds"
 msgstr ""
 
 #: includes/class-snapcart-admin.php:1130
-msgid "Newest products"
+msgid "Set to 0 to leave it on screen until the shopper closes it. The countdown pauses while they hover or use the confirmation."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1131
-msgid "Products you choose"
+#: includes/class-snapcart-admin.php:1148
+msgid "Suggest more products inside the confirmation"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1133
-msgid "Related products use the categories and tags shared with the item just added, so the suggestions stay relevant."
+#: includes/class-snapcart-admin.php:1162 includes/class-snapcart-recommendations.php:85
+msgid "Discover more"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1149
-msgid "Search for a product…"
+#: includes/class-snapcart-admin.php:1163
+msgid "Leave blank to use the default wording."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1166
-msgid "Shown in the order you add them. Only used when \"Products you choose\" is selected above."
+#: includes/class-snapcart-admin.php:1176
+msgid "Related to what they just added"
+msgstr ""
+
+#: includes/class-snapcart-admin.php:1177
+msgid "Featured products"
+msgstr ""
+
+#: includes/class-snapcart-admin.php:1178
+msgid "Best sellers"
 msgstr ""
 
 #: includes/class-snapcart-admin.php:1179
-msgid "products"
+msgid "Newest products"
 msgstr ""
 
 #: includes/class-snapcart-admin.php:1180
+msgid "Products you choose"
+msgstr ""
+
+#: includes/class-snapcart-admin.php:1182
+msgid "Related products use the categories and tags shared with the item just added, so the suggestions stay relevant."
+msgstr ""
+
+#: includes/class-snapcart-admin.php:1198
+msgid "Search for a product…"
+msgstr ""
+
+#: includes/class-snapcart-admin.php:1215
+msgid "Shown in the order you add them. Only used when \"Products you choose\" is selected above."
+msgstr ""
+
+#: includes/class-snapcart-admin.php:1228
+msgid "products"
+msgstr ""
+
+#: includes/class-snapcart-admin.php:1229
 msgid "The strip scrolls sideways, so four to six keeps it readable on a phone."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1190
+#: includes/class-snapcart-admin.php:1239
 msgid "Show a price under each suggestion"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1207
+#: includes/class-snapcart-admin.php:1256
 msgid "Delete SnapCart settings when the plugin is deleted"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1208
+#: includes/class-snapcart-admin.php:1257
 msgid "Left off, your settings survive a deactivate and reinstall. SnapCart never touches your products, orders or customers either way."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1225
+#: includes/class-snapcart-admin.php:1274
 msgid "You do not have permission to manage SnapCart settings."
-msgstr ""
-
-#: includes/class-snapcart-admin.php:1234
-msgid "A cart icon that counts itself, and a confirmation that keeps shoppers moving instead of bouncing them to the cart page."
-msgstr ""
-
-#: includes/class-snapcart-admin.php:1256
-msgid "Save Changes"
 msgstr ""
 
 #: includes/class-snapcart-admin.php:128
 msgid "Settings"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1372
+#: includes/class-snapcart-admin.php:1283
+msgid "A cart icon that counts itself, and a confirmation that keeps shoppers moving instead of bouncing them to the cart page."
+msgstr ""
+
+#: includes/class-snapcart-admin.php:1305
+msgid "Save Changes"
+msgstr ""
+
+#: includes/class-snapcart-admin.php:1422
 msgid "Preview"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1391
-msgid "Your cart icon on a light and a dark header. Updates as you change the settings; save to apply it to your store."
+#: includes/class-snapcart-admin.php:1442
+msgid "Your cart icon on a light and a dark header. Updates as you change the settings, and hovering it shows the hover state. Save to apply it to your store."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1405
+#: includes/class-snapcart-admin.php:1456
 msgid "Add the Icon to Your Header"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1407
+#: includes/class-snapcart-admin.php:1458
 msgid "Using a block theme or the site editor: search the block inserter for \"Snap Cart\"."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1409
+#: includes/class-snapcart-admin.php:1460
 msgid "Using a classic theme or a header builder: drop this shortcode into any HTML, shortcode or widget area."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1414
+#: includes/class-snapcart-admin.php:1465
 msgid "Copy"
 msgstr ""
 
 #. translators: 1: shortcode with a label attribute, 2: shortcode with a show_label attribute.
-#: includes/class-snapcart-admin.php:1422
+#: includes/class-snapcart-admin.php:1473
 msgid "To override the Label settings for one placement, use %1$s. To hide the label somewhere it is otherwise on, use %2$s."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1439
+#: includes/class-snapcart-admin.php:1490
 msgid "The count keeps itself right whenever the cart changes — adding on a shop page, removing a line on the cart page, or editing a quantity. No reload needed, and it still works if your theme has cart fragments switched off."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1440
+#: includes/class-snapcart-admin.php:1491
 msgid "On a single product page most themes reload the page. The confirmation appears straight after the reload."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1441
+#: includes/class-snapcart-admin.php:1492
 msgid "The preview above shows your icon on a light and a dark header. If your header changes colour on scroll, clear the icon colour and it will follow the header instead."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1442
+#: includes/class-snapcart-admin.php:1493
 msgid "A shortcode or block can carry its own wording, which overrides the Label settings for that one placement without changing the rest of your site."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1443
+#: includes/class-snapcart-admin.php:1494
 msgid "Product suggestions are off until you turn them on. While they are off SnapCart runs no product queries at all."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1444
+#: includes/class-snapcart-admin.php:1495
 msgid "Nothing is added to your pages until it is needed, and no data ever leaves your server."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:1452
+#: includes/class-snapcart-admin.php:1503
 msgid "Heads up: your store currently redirects to the cart after every add, so the confirmation will not appear. Turn that off under WooCommerce → Settings → Products to use it."
-msgstr ""
-
-#: includes/class-snapcart-admin.php:1459
-msgid "Heads up: AJAX add to cart is off on your store, so shop and category pages reload when a shopper adds something. SnapCart still works, but the confirmation feels faster with it on — see WooCommerce → Settings → Products."
-msgstr ""
-
-#: includes/class-snapcart-admin.php:1464
-msgid "Good to Know"
 msgstr ""
 
 #: includes/class-snapcart-admin.php:151
 msgid "Support"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:207
+#: includes/class-snapcart-admin.php:1510
+msgid "Heads up: AJAX add to cart is off on your store, so shop and category pages reload when a shopper adds something. SnapCart still works, but the confirmation feels faster with it on — see WooCommerce → Settings → Products."
+msgstr ""
+
+#: includes/class-snapcart-admin.php:1515
+msgid "Good to Know"
+msgstr ""
+
+#: includes/class-snapcart-admin.php:209
 msgid "Copied"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:209 includes/class-snapcart-admin.php:683 includes/class-snapcart-admin.php:720 includes/class-snapcart-admin.php:1384 includes/class-snapcart-frontend.php:255
+#: includes/class-snapcart-admin.php:214 includes/class-snapcart-admin.php:717 includes/class-snapcart-admin.php:754 includes/class-snapcart-admin.php:1435 includes/class-snapcart-frontend.php:256
 msgid "Cart"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:245
+#: includes/class-snapcart-admin.php:250
 msgid "How the cart button looks in your header, and where it sends shoppers."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:248
+#: includes/class-snapcart-admin.php:253
 msgid "Icon"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:250
+#: includes/class-snapcart-admin.php:255
 msgid "Shape"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:251
+#: includes/class-snapcart-admin.php:256
+msgid "Style"
+msgstr ""
+
+#: includes/class-snapcart-admin.php:257
 msgid "Size"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:252 includes/class-snapcart-admin.php:968
-msgid "Color"
-msgstr ""
-
-#: includes/class-snapcart-admin.php:253
-msgid "Links To"
-msgstr ""
-
-#: includes/class-snapcart-admin.php:255 includes/class-snapcart-admin.php:257 includes/class-snapcart-admin.php:1054
-msgid "Label"
-msgstr ""
-
-#: includes/class-snapcart-admin.php:258
-msgid "Wording"
-msgstr ""
-
-#: includes/class-snapcart-admin.php:259 includes/class-snapcart-admin.php:263
-msgid "Position"
-msgstr ""
-
-#: includes/class-snapcart-admin.php:261
-msgid "Item Count"
-msgstr ""
-
-#: includes/class-snapcart-admin.php:264 includes/class-snapcart-admin.php:299
+#: includes/class-snapcart-admin.php:258 includes/class-snapcart-admin.php:270 includes/class-snapcart-admin.php:305
 msgid "Colors"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:265
+#: includes/class-snapcart-admin.php:259
+msgid "Links To"
+msgstr ""
+
+#: includes/class-snapcart-admin.php:261 includes/class-snapcart-admin.php:263 includes/class-snapcart-admin.php:1103
+msgid "Label"
+msgstr ""
+
+#: includes/class-snapcart-admin.php:264
+msgid "Wording"
+msgstr ""
+
+#: includes/class-snapcart-admin.php:265 includes/class-snapcart-admin.php:269
+msgid "Position"
+msgstr ""
+
+#: includes/class-snapcart-admin.php:267
+msgid "Item Count"
+msgstr ""
+
+#: includes/class-snapcart-admin.php:271
 msgid "When Empty"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:275
+#: includes/class-snapcart-admin.php:281
 msgid "Added to Cart Confirmation"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:276
+#: includes/class-snapcart-admin.php:282
 msgid "Reassure shoppers the moment they add something, and give them a clear route to checkout without losing their place."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:277 includes/class-snapcart-admin.php:280
+#: includes/class-snapcart-admin.php:283 includes/class-snapcart-admin.php:286
 msgid "Confirmation"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:281
+#: includes/class-snapcart-admin.php:287
 msgid "Close Automatically"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:283 includes/class-snapcart-admin.php:321
+#: includes/class-snapcart-admin.php:289 includes/class-snapcart-admin.php:327
 msgid "Appearance"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:285
+#: includes/class-snapcart-admin.php:291
 msgid "Layout"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:286
+#: includes/class-snapcart-admin.php:292
 msgid "Backdrop"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:287
+#: includes/class-snapcart-admin.php:293
 msgid "Popup Colors"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:288 includes/class-snapcart-admin.php:300
+#: includes/class-snapcart-admin.php:294 includes/class-snapcart-admin.php:306
 msgid "Corners"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:290
+#: includes/class-snapcart-admin.php:296
 msgid "Content"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:292
+#: includes/class-snapcart-admin.php:298
 msgid "Headline"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:293
+#: includes/class-snapcart-admin.php:299
 msgid "Supporting Text"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:294
+#: includes/class-snapcart-admin.php:300
 msgid "Show or Hide"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:296
+#: includes/class-snapcart-admin.php:302
 msgid "Buttons"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:298
+#: includes/class-snapcart-admin.php:304
 msgid "Labels"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:307
+#: includes/class-snapcart-admin.php:313
 msgid "Product Suggestions"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:308
+#: includes/class-snapcart-admin.php:314
 msgid "Add a scrollable strip of products to the confirmation to lift average order value. Off by default; when it is off, no extra product data is loaded at all."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:309 includes/class-snapcart-admin.php:313
+#: includes/class-snapcart-admin.php:315 includes/class-snapcart-admin.php:319
 msgid "Suggestions"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:310
+#: includes/class-snapcart-admin.php:316
 msgid "Suggestions appear inside the add-to-cart confirmation. Turn the confirmation on to use them."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:315
+#: includes/class-snapcart-admin.php:321
 msgid "Which Products"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:317
+#: includes/class-snapcart-admin.php:323
 msgid "Source"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:318
+#: includes/class-snapcart-admin.php:324
 msgid "Chosen Products"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:319
+#: includes/class-snapcart-admin.php:325
 msgid "How Many"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:323
+#: includes/class-snapcart-admin.php:329
 msgid "Heading"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:324
+#: includes/class-snapcart-admin.php:330
 msgid "Show Prices"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:325 includes/class-snapcart-admin.php:505
+#: includes/class-snapcart-admin.php:331 includes/class-snapcart-admin.php:512
 msgid "Arrow Corners"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:329
+#: includes/class-snapcart-admin.php:335
 msgid "Data"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:330
+#: includes/class-snapcart-admin.php:336
 msgid "What happens to your settings if you ever remove the plugin."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:333
+#: includes/class-snapcart-admin.php:339
 msgid "On Deletion"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:499
+#: includes/class-snapcart-admin.php:505
 msgid "Icon Shape"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:500
+#: includes/class-snapcart-admin.php:506
+msgid "Icon Style"
+msgstr ""
+
+#: includes/class-snapcart-admin.php:507
 msgid "Item Count Position"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:501
+#: includes/class-snapcart-admin.php:508
 msgid "Label Position"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:502
+#: includes/class-snapcart-admin.php:509
 msgid "Confirmation Layout"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:503
+#: includes/class-snapcart-admin.php:510
 msgid "Popup Corners"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:504
+#: includes/class-snapcart-admin.php:511
 msgid "Button Corners"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:629
+#: includes/class-snapcart-admin.php:636
 msgid "Shopping Bag"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:630
+#: includes/class-snapcart-admin.php:637
 msgid "Trolley"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:631
+#: includes/class-snapcart-admin.php:638
 msgid "Basket"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:632
+#: includes/class-snapcart-admin.php:639
 msgid "Tote"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:633
+#: includes/class-snapcart-admin.php:640
 msgid "Handbag"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:648
-msgid "Outline icons drawn as inline SVG, so they stay crisp at any size and add nothing to load."
+#: includes/class-snapcart-admin.php:658
+msgid "Drawn as inline SVG, so they stay crisp at any size and add nothing to load."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:658
+#: includes/class-snapcart-admin.php:674
+msgid "Outlined"
+msgstr ""
+
+#: includes/class-snapcart-admin.php:678
+msgid "Filled"
+msgstr ""
+
+#: includes/class-snapcart-admin.php:682
+msgid "Shown using the shape you picked above. Outlined suits light, airy headers; filled reads more strongly at small sizes and on busy backgrounds."
+msgstr ""
+
+#: includes/class-snapcart-admin.php:692
 msgid "pixels"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:669
+#: includes/class-snapcart-admin.php:703
 msgid "Show label beside the cart icon"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:670
+#: includes/class-snapcart-admin.php:704
 msgid "The label takes the same color as the icon, so the two always match."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:684
+#: includes/class-snapcart-admin.php:718
 msgid "Leave blank to use \"Cart\". A shortcode or block can override this in one place without changing it everywhere."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:698
+#: includes/class-snapcart-admin.php:732
 msgid "Left"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:702
+#: includes/class-snapcart-admin.php:736
 msgid "Right"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:734
+#: includes/class-snapcart-admin.php:768
 msgid "Top Left"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:738
+#: includes/class-snapcart-admin.php:772
 msgid "Top Right"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:769 includes/class-snapcart-admin.php:943 includes/class-snapcart-admin.php:1053
+#: includes/class-snapcart-admin.php:803 includes/class-snapcart-admin.php:992 includes/class-snapcart-admin.php:1102
 msgid "Background"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:770
+#: includes/class-snapcart-admin.php:804
 msgid "Number"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:771 includes/class-snapcart-admin.php:947
+#: includes/class-snapcart-admin.php:805 includes/class-snapcart-admin.php:996
 msgid "Border"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:785 includes/class-snapcart-admin.php:954
+#: includes/class-snapcart-admin.php:819 includes/class-snapcart-admin.php:1003
 msgid "Border Opacity"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:789
+#: includes/class-snapcart-admin.php:823
 msgid "The border is always 1px and solid. Clear its color to remove it altogether. Clear a background or number color to inherit your theme instead."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:799
-msgid "Applies to the icon and to any wording beside it, so the two always match. Black suits the light headers most themes ship with; clear this field to inherit your header text color instead, which is the safer choice if your header is dark or changes color on scroll."
+#: includes/class-snapcart-admin.php:833
+msgid "Default"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:810
+#: includes/class-snapcart-admin.php:834
+msgid "Hover"
+msgstr ""
+
+#: includes/class-snapcart-admin.php:847
+msgid "Applies to the icon and to any wording beside it, so the two always match. Black suits the light headers most themes ship with; clear the default to inherit your header text color instead, which is the safer choice if your header is dark or changes color on scroll."
+msgstr ""
+
+#: includes/class-snapcart-admin.php:848
+msgid "Leave Hover empty and the icon simply fades slightly on hover, as it always has. Set a color and it switches to that instead, at full strength."
+msgstr ""
+
+#: includes/class-snapcart-admin.php:859
 msgid "Hide the number when the cart is empty"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:811
+#: includes/class-snapcart-admin.php:860
 msgid "Most stores prefer a clean icon until the first item is added."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:824
+#: includes/class-snapcart-admin.php:873
 msgid "The cart page"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:825
+#: includes/class-snapcart-admin.php:874
 msgid "Straight to checkout"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:827
+#: includes/class-snapcart-admin.php:876
 msgid "Sending shoppers straight to checkout shortens the path to purchase, but removes their chance to review the cart first."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:845
+#: includes/class-snapcart-admin.php:894
 msgid "Show a confirmation when a shopper adds an item"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:846
+#: includes/class-snapcart-admin.php:895
 msgid "This does not affect the cart icon and live count."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:861
+#: includes/class-snapcart-admin.php:910
 msgid "Centred Dialog"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:865
+#: includes/class-snapcart-admin.php:914
 msgid "Corner Notice"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:869
+#: includes/class-snapcart-admin.php:918
 msgid "The centred dialog dims the page and takes keyboard focus, so it is hard to miss. The corner notice never interrupts browsing, which suits stores where shoppers add several items in a row."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:881 includes/class-snapcart-frontend.php:608
+#: includes/class-snapcart-admin.php:930 includes/class-snapcart-frontend.php:611
 msgid "Added to your cart"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:882
+#: includes/class-snapcart-admin.php:931
 msgid "Speak to the shopper. Leave blank to use the default wording."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:894 includes/class-snapcart-frontend.php:612
+#: includes/class-snapcart-admin.php:943 includes/class-snapcart-frontend.php:615
 msgid "Saved to your cart and ready whenever you are."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:895
+#: includes/class-snapcart-admin.php:944
 msgid "One short line under the headline. Leave blank to use the default wording."
 msgstr ""
 
-#: includes/class-snapcart-admin.php:906
+#: includes/class-snapcart-admin.php:955
 msgid "Main Button"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:907 includes/class-snapcart-frontend.php:614
+#: includes/class-snapcart-admin.php:956 includes/class-snapcart-frontend.php:617
 msgid "View cart"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:911
+#: includes/class-snapcart-admin.php:960
 msgid "Second Button"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:912 includes/class-snapcart-frontend.php:615
+#: includes/class-snapcart-admin.php:961 includes/class-snapcart-frontend.php:618
 msgid "Continue shopping"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:922
+#: includes/class-snapcart-admin.php:971
 msgid "Show the green tick beside the headline"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:923
+#: includes/class-snapcart-admin.php:972
 msgid "Show the supporting line under the headline"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:924
+#: includes/class-snapcart-admin.php:973
 msgid "Show the product photo"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:925
+#: includes/class-snapcart-admin.php:974
 msgid "Show the price"
 msgstr ""
 
-#: includes/class-snapcart-admin.php:926
+#: includes/class-snapcart-admin.php:975
 msgid "Anything switched off is left out of the page entirely rather than hidden with CSS. Prices follow your tax display settings and any active sale price."
-msgstr ""
-
-#: includes/class-snapcart-admin.php:958
-msgid "The border is always 1px and solid. Clear its color to remove it altogether."
-msgstr ""
-
-#: includes/class-snapcart-admin.php:974
-msgid "Opacity"
-msgstr ""
-
-#: includes/class-snapcart-admin.php:978
-msgid "The dimmed layer behind the centred dialog. A lower opacity keeps more of your page visible; a higher one puts more focus on the confirmation."
-msgstr ""
-
-#: includes/class-snapcart-admin.php:990 includes/class-snapcart-admin.php:1007 includes/class-snapcart-admin.php:1024
-msgid "Sharp"
-msgstr ""
-
-#: includes/class-snapcart-admin.php:991 includes/class-snapcart-admin.php:1008 includes/class-snapcart-admin.php:1025
-msgid "Soft"
-msgstr ""
-
-#: includes/class-snapcart-admin.php:992
-msgid "Rounded"
-msgstr ""
-
-#: includes/class-snapcart-admin.php:994
-msgid "Also applied to the product row, thumbnails and suggestion cards, so the whole confirmation stays consistent."
 msgstr ""
 
 #. translators: 1: lowest price, 2: highest price.
@@ -618,26 +650,26 @@ msgid "%1$s – %2$s"
 msgstr ""
 
 #. translators: %d: number of items currently in the cart.
-#: includes/class-snapcart-frontend.php:188
+#: includes/class-snapcart-frontend.php:189
 msgid "Cart, %d item"
 msgid_plural "Cart, %d items"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-snapcart-frontend.php:616
+#: includes/class-snapcart-frontend.php:619
 msgid "Close"
 msgstr ""
 
-#: includes/class-snapcart-frontend.php:617
+#: includes/class-snapcart-frontend.php:620
 msgid "Previous products"
 msgstr ""
 
-#: includes/class-snapcart-frontend.php:618
+#: includes/class-snapcart-frontend.php:621
 msgid "More products"
 msgstr ""
 
 #. translators: %d: quantity added.
-#: includes/class-snapcart-frontend.php:620
+#: includes/class-snapcart-frontend.php:623
 msgid "Qty %d"
 msgstr ""
 

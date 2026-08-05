@@ -28,7 +28,7 @@ SnapCart is deliberately small. There is no page builder, no dashboard, no accou
 
 = What you control =
 
-* **Icon** — five shapes covering how the biggest stores do it: shopping bag, trolley, basket, tote and handbag. Set the size and color, or clear the color to inherit your header so it stays legible on light and dark themes alike.
+* **Icon** — five shapes covering how the biggest stores do it: shopping bag, trolley, basket, tote and handbag, each drawn outlined or filled. Set the size and color, or clear the color to inherit your header so it stays legible on light and dark themes alike. Give it a hover color too, or leave it to fade the way it always has.
 * **Label** — optionally show wording such as "Cart" beside the icon, on either side. It takes the icon's color automatically, and a shortcode or block can override it in one place.
 * **Count badge** — position it left or right, set its background, number and border colors, choose the border's opacity, or hide the badge while the cart is empty.
 * **Destination** — send the icon to the cart page or straight to checkout.
@@ -146,7 +146,9 @@ Yes. Filters are available for the icon markup (`snapcart_icon_html`), its link 
 
 == Changelog ==
 
-= 2.0.12 =
+= 2.1.0 =
+* New: choose whether the cart icon is drawn outlined or filled. Both styles are shown as swatches using the shape you picked, so you compare the actual icon rather than a generic sample.
+* New: a hover color for the cart icon. Leave it empty and the icon fades slightly on hover exactly as before; set one and it switches to that color at full strength instead. The settings preview reacts to hover, so you can judge it on a light and a dark header before saving.
 * Fixed: themes could bleed their own styling into the confirmation and the cart icon — button padding and uppercase labels, underlines and carets on the icon, heading borders, and squashed product thumbnails on themes that force `img { height: auto }`. Both now render the same on any theme or child theme.
 * Fixed: the CSS build step could merge a descendant selector into a compound one, so a rule intended for elements inside the confirmation was applied to the confirmation itself.
 
@@ -237,8 +239,8 @@ Yes. Filters are available for the icon markup (`snapcart_icon_html`), its link 
 
 == Upgrade Notice ==
 
-= 2.0.12 =
-The confirmation and cart icon now hold their own styling on themes that were overriding them. Your settings are unchanged.
+= 2.1.0 =
+Adds outlined or filled cart icons and a hover color. The confirmation and icon also now hold their own styling on themes that were overriding them. Your settings are unchanged, and the icon keeps the outlined style it has today.
 
 = 2.0.11 =
 A small settings screen fix. Nothing on your store changes.

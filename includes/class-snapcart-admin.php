@@ -199,13 +199,18 @@ final class SnapCart_Admin {
 		);
 
 		// The icon paths come from the same source the front end renders from,
-		// so the preview cannot drift from what a shopper actually sees.
+		// so the preview cannot drift from what a shopper actually sees. Both
+		// fill styles are handed over so switching between them in the preview
+		// costs no request.
 		wp_add_inline_script(
 			'snapcart-admin',
 			'window.SnapCartAdmin = ' . wp_json_encode(
 				array(
 					'copied'       => __( 'Copied', 'snapcart-for-woocommerce' ),
-					'icons'        => SnapCart_Icons::paths(),
+					'icons'        => array(
+						'outline' => SnapCart_Icons::paths( 'outline' ),
+						'filled'  => SnapCart_Icons::paths( 'filled' ),
+					),
 					'defaultLabel' => __( 'Cart', 'snapcart-for-woocommerce' ),
 				)
 			) . ';',
@@ -248,8 +253,9 @@ final class SnapCart_Admin {
 		$this->add_group( 'icon_glyph', 'icon', __( 'Icon', 'snapcart-for-woocommerce' ) );
 
 		$this->add_field( 'icon_style', __( 'Shape', 'snapcart-for-woocommerce' ), 'icon_glyph', 'field_icon_style' );
+		$this->add_field( 'icon_fill', __( 'Style', 'snapcart-for-woocommerce' ), 'icon_glyph', 'field_icon_fill' );
 		$this->add_field( 'icon_size', __( 'Size', 'snapcart-for-woocommerce' ), 'icon_glyph', 'field_icon_size' );
-		$this->add_field( 'icon_color', __( 'Color', 'snapcart-for-woocommerce' ), 'icon_glyph', 'field_icon_color' );
+		$this->add_field( 'icon_color', __( 'Colors', 'snapcart-for-woocommerce' ), 'icon_glyph', 'field_icon_color' );
 		$this->add_field( 'link_target', __( 'Links To', 'snapcart-for-woocommerce' ), 'icon_glyph', 'field_link_target' );
 
 		$this->add_group( 'icon_label', 'icon', __( 'Label', 'snapcart-for-woocommerce' ) );
@@ -497,6 +503,7 @@ final class SnapCart_Admin {
 	private function field_label( $key ) {
 		$labels = array(
 			'icon_style'     => __( 'Icon Shape', 'snapcart-for-woocommerce' ),
+			'icon_fill'      => __( 'Icon Style', 'snapcart-for-woocommerce' ),
 			'badge_position' => __( 'Item Count Position', 'snapcart-for-woocommerce' ),
 			'label_position' => __( 'Label Position', 'snapcart-for-woocommerce' ),
 			'popup_style'   => __( 'Confirmation Layout', 'snapcart-for-woocommerce' ),
@@ -626,26 +633,53 @@ final class SnapCart_Admin {
 	 */
 	public function field_icon_style() {
 		$labels = array(
-			'bag'      => __( 'Shopping Bag', 'snapcart-for-woocommerce' ),
-			'cart'     => __( 'Trolley', 'snapcart-for-woocommerce' ),
-			'basket'   => __( 'Basket', 'snapcart-for-woocommerce' ),
-			'tote'     => __( 'Tote', 'snapcart-for-woocommerce' ),
-			'handbag'  => __( 'Handbag', 'snapcart-for-woocommerce' ),
+			'bag'     => __( 'Shopping Bag', 'snapcart-for-woocommerce' ),
+			'cart'    => __( 'Trolley', 'snapcart-for-woocommerce' ),
+			'basket'  => __( 'Basket', 'snapcart-for-woocommerce' ),
+			'tote'    => __( 'Tote', 'snapcart-for-woocommerce' ),
+			'handbag' => __( 'Handbag', 'snapcart-for-woocommerce' ),
 		);
 
+		// Drawn in whichever fill style is currently selected, so the shapes are
+		// compared as they will actually appear rather than as generic outlines.
+		$fill    = (string) SnapCart_Options::get( 'icon_fill' );
 		$choices = array();
 
 		foreach ( $labels as $style => $label ) {
 			$choices[ $style ] = array(
 				'label'   => $label,
-				'preview' => SnapCart_Icons::svg( $style, 26, 'snapcart-card-option__icon' ),
+				'preview' => SnapCart_Icons::svg( $style, 26, 'snapcart-card-option__icon', $fill ),
 			);
 		}
 
 		$this->radio_cards(
 			'icon_style',
 			$choices,
-			__( 'Outline icons drawn as inline SVG, so they stay crisp at any size and add nothing to load.', 'snapcart-for-woocommerce' )
+			__( 'Drawn as inline SVG, so they stay crisp at any size and add nothing to load.', 'snapcart-for-woocommerce' )
+		);
+	}
+
+	/**
+	 * Outlined or filled.
+	 *
+	 * @return void
+	 */
+	public function field_icon_fill() {
+		$style = (string) SnapCart_Options::get( 'icon_style' );
+
+		$this->radio_cards(
+			'icon_fill',
+			array(
+				'outline' => array(
+					'label'   => __( 'Outlined', 'snapcart-for-woocommerce' ),
+					'preview' => SnapCart_Icons::svg( $style, 26, 'snapcart-card-option__icon', 'outline' ),
+				),
+				'filled'  => array(
+					'label'   => __( 'Filled', 'snapcart-for-woocommerce' ),
+					'preview' => SnapCart_Icons::svg( $style, 26, 'snapcart-card-option__icon', 'filled' ),
+				),
+			),
+			__( 'Shown using the shape you picked above. Outlined suits light, airy headers; filled reads more strongly at small sizes and on busy backgrounds.', 'snapcart-for-woocommerce' )
 		);
 	}
 
@@ -716,7 +750,7 @@ final class SnapCart_Admin {
 		return sprintf(
 			'<span class="snapcart-label-preview snapcart-label-preview--%1$s">%2$s<span class="snapcart-label-preview__text">%3$s</span></span>',
 			esc_attr( $position ),
-			SnapCart_Icons::svg( SnapCart_Options::get( 'icon_style' ), 20, 'snapcart-label-preview__icon' ),
+			SnapCart_Icons::svg( SnapCart_Options::get( 'icon_style' ), 20, 'snapcart-label-preview__icon', SnapCart_Options::get( 'icon_fill' ) ),
 			esc_html( SnapCart_Options::text( 'label_text', __( 'Cart', 'snapcart-for-woocommerce' ) ) )
 		);
 	}
@@ -755,7 +789,7 @@ final class SnapCart_Admin {
 		return sprintf(
 			'<span class="snapcart-badge-preview snapcart-badge-preview--%1$s">%2$s<span class="snapcart-badge-preview__count">2</span></span>',
 			esc_attr( $position ),
-			SnapCart_Icons::svg( SnapCart_Options::get( 'icon_style' ), 24, 'snapcart-badge-preview__icon' )
+			SnapCart_Icons::svg( SnapCart_Options::get( 'icon_style' ), 24, 'snapcart-badge-preview__icon', SnapCart_Options::get( 'icon_fill' ) )
 		);
 	}
 
@@ -795,8 +829,23 @@ final class SnapCart_Admin {
 	 * @return void
 	 */
 	public function field_icon_color() {
-		$this->color_input( 'icon_color', '#000000' );
-		$this->description( __( 'Applies to the icon and to any wording beside it, so the two always match. Black suits the light headers most themes ship with; clear this field to inherit your header text color instead, which is the safer choice if your header is dark or changes color on scroll.', 'snapcart-for-woocommerce' ) );
+		$swatches = array(
+			'icon_color'       => array( __( 'Default', 'snapcart-for-woocommerce' ), '#000000' ),
+			'icon_hover_color' => array( __( 'Hover', 'snapcart-for-woocommerce' ), '#000000' ),
+		);
+
+		echo '<div class="snapcart-color-pair">';
+
+		foreach ( $swatches as $key => $swatch ) {
+			echo '<span class="snapcart-color-pair__item"><span class="snapcart-color-pair__label">' . esc_html( $swatch[0] ) . '</span>';
+			$this->color_input( $key, $swatch[1] );
+			echo '</span>';
+		}
+
+		echo '</div>';
+
+		$this->description( __( 'Applies to the icon and to any wording beside it, so the two always match. Black suits the light headers most themes ship with; clear the default to inherit your header text color instead, which is the safer choice if your header is dark or changes color on scroll.', 'snapcart-for-woocommerce' ) );
+		$this->description( __( 'Leave Hover empty and the icon simply fades slightly on hover, as it always has. Set a color and it switches to that instead, at full strength.', 'snapcart-for-woocommerce' ) );
 	}
 
 	/**
@@ -1366,6 +1415,7 @@ final class SnapCart_Admin {
 	 */
 	private function render_preview_card() {
 		$style = SnapCart_Icons::normalize( SnapCart_Options::get( 'icon_style' ) );
+		$fill  = SnapCart_Icons::normalize_fill( SnapCart_Options::get( 'icon_fill' ) );
 		$size  = (int) SnapCart_Options::get( 'icon_size' );
 		?>
 		<div class="snapcart-card">
@@ -1373,12 +1423,13 @@ final class SnapCart_Admin {
 
 			<div class="snapcart-preview-stage" id="snapcart-preview"
 				data-icon-size="<?php echo esc_attr( (string) $size ); ?>"
-				data-icon-style="<?php echo esc_attr( $style ); ?>">
+				data-icon-style="<?php echo esc_attr( $style ); ?>"
+				data-icon-fill="<?php echo esc_attr( $fill ); ?>">
 				<?php foreach ( array( 'light', 'dark' ) as $scheme ) : ?>
 					<div class="snapcart-preview-stage__pane snapcart-preview-stage__pane--<?php echo esc_attr( $scheme ); ?>">
 						<span class="snapcart-preview-icon snapcart-preview-icon--<?php echo esc_attr( SnapCart_Options::get( 'badge_position' ) ); ?><?php echo 'left' === SnapCart_Options::get( 'label_position' ) ? ' snapcart-preview-icon--label-left' : ''; ?>">
 							<span class="snapcart-preview-icon__glyph">
-								<?php echo SnapCart_Icons::svg( $style, $size, 'snapcart-preview-icon__svg' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG from the icon set. ?>
+								<?php echo SnapCart_Icons::svg( $style, $size, 'snapcart-preview-icon__svg', $fill ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG from the icon set. ?>
 								<span class="snapcart-preview-icon__count">2</span>
 							</span>
 							<span class="snapcart-preview-icon__label"<?php echo SnapCart_Options::is_on( 'enable_label' ) ? '' : ' hidden'; ?>><?php echo esc_html( SnapCart_Options::text( 'label_text', __( 'Cart', 'snapcart-for-woocommerce' ) ) ); ?></span>
@@ -1388,7 +1439,7 @@ final class SnapCart_Admin {
 			</div>
 
 			<p class="description">
-				<?php esc_html_e( 'Your cart icon on a light and a dark header. Updates as you change the settings; save to apply it to your store.', 'snapcart-for-woocommerce' ); ?>
+				<?php esc_html_e( 'Your cart icon on a light and a dark header. Updates as you change the settings, and hovering it shows the hover state. Save to apply it to your store.', 'snapcart-for-woocommerce' ); ?>
 			</p>
 		</div>
 		<?php

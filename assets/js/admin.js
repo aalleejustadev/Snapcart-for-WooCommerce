@@ -208,12 +208,49 @@
 			parseInt( clean.slice( 4, 6 ), 16 ) + ',' + alpha + ')';
 	}
 
+	/**
+	 * Redraw the icon inside every swatch on the Shape and Style pickers, so the
+	 * two agree with each other and with the live preview. Shape swatches follow
+	 * the chosen fill; Style swatches follow the chosen shape but keep their own
+	 * fill, since showing both filled would leave nothing to choose between.
+	 */
+	function updateSwatches( shape, fill ) {
+		var icons = strings.icons || {};
+
+		Array.prototype.forEach.call(
+			document.querySelectorAll( '.snapcart-card-option' ),
+			function ( option ) {
+				var input = option.querySelector( '.snapcart-card-option__input' );
+				var glyph = option.querySelector( '.snapcart-card-option__icon' );
+
+				if ( ! input || ! glyph || ! input.name ) {
+					return;
+				}
+
+				var isShape = input.name.indexOf( '[icon_style]' ) !== -1;
+				var isFill = input.name.indexOf( '[icon_fill]' ) !== -1;
+
+				if ( ! isShape && ! isFill ) {
+					return;
+				}
+
+				var set = icons[ isFill ? input.value : fill ];
+				var key = isFill ? shape : input.value;
+
+				if ( set && set[ key ] ) {
+					glyph.innerHTML = set[ key ];
+				}
+			}
+		);
+	}
+
 	function updatePreview() {
 		if ( ! preview ) {
 			return;
 		}
 
-		var icons = strings.icons || {};
+		var fill = checkedValue( 'icon_fill' ) || 'outline';
+		var icons = ( strings.icons || {} )[ fill ] || {};
 		var shape = checkedValue( 'icon_style' );
 		var size = parseInt( fieldValue( 'icon_size' ), 10 ) || 24;
 		var position = checkedValue( 'badge_position' ) || 'right';
@@ -248,9 +285,19 @@
 			}
 		);
 
+		updateSwatches( shape, fill );
+
 		// An empty color means "inherit", which in the preview means letting the
 		// pane's own light or dark text color show through.
 		preview.style.setProperty( '--preview-icon', fieldValue( 'icon_color' ) || '' );
+
+		// An empty hover color keeps the old behaviour: same color, dimmed. The
+		// two properties are set together so the preview matches exactly what
+		// get_custom_properties() writes on the front end.
+		var hover = fieldValue( 'icon_hover_color' );
+		preview.style.setProperty( '--preview-icon-hover', hover || fieldValue( 'icon_color' ) || '' );
+		preview.style.setProperty( '--preview-icon-hover-opacity', hover ? '1' : '0.75' );
+
 		preview.style.setProperty( '--preview-badge-bg', fieldValue( 'badge_bg' ) || 'transparent' );
 		preview.style.setProperty( '--preview-badge-color', fieldValue( 'badge_color' ) || '' );
 		preview.style.setProperty(

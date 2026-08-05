@@ -116,7 +116,7 @@ final class SnapCart_Frontend {
 			return;
 		}
 
-		$paths = SnapCart_Icons::paths();
+		$paths = SnapCart_Icons::paths( SnapCart_Options::get( 'icon_fill' ) );
 		$style = SnapCart_Icons::normalize( SnapCart_Options::get( 'icon_style' ) );
 
 		wp_add_inline_script(
@@ -124,7 +124,8 @@ final class SnapCart_Frontend {
 			'window.SnapCartBlock = ' . wp_json_encode(
 				array(
 					'settingsUrl' => admin_url( 'admin.php?page=' . SnapCart_Admin::PAGE_SLUG ),
-					// So the editor preview shows the icon the store actually uses.
+					// So the editor preview shows the icon the store actually uses,
+					// in the fill style it actually uses.
 					'iconPath'    => $paths[ $style ],
 					'iconSize'    => (int) SnapCart_Options::get( 'icon_size' ),
 				)
@@ -325,7 +326,9 @@ final class SnapCart_Frontend {
 	private function get_icon_svg() {
 		return SnapCart_Icons::svg(
 			(string) SnapCart_Options::get( 'icon_style' ),
-			(int) SnapCart_Options::get( 'icon_size' )
+			(int) SnapCart_Options::get( 'icon_size' ),
+			'snapcart-icon__svg',
+			(string) SnapCart_Options::get( 'icon_fill' )
 		);
 	}
 
@@ -681,6 +684,15 @@ final class SnapCart_Frontend {
 			if ( '' !== $value ) {
 				$rules[] = $property . ':' . $value;
 			}
+		}
+
+		// Hovering the icon dims it by default. Once a hover color is chosen the
+		// change of color is the feedback, so the dimming is switched off — two
+		// signals at once reads as a mistake rather than as emphasis.
+		$hover = (string) SnapCart_Options::get( 'icon_hover_color' );
+		if ( '' !== $hover ) {
+			$rules[] = '--snapcart-icon-hover-color:' . $hover;
+			$rules[] = '--snapcart-icon-hover-opacity:1';
 		}
 
 		// Clearing a border color is how the shop owner turns that border off,
